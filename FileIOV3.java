@@ -35,9 +35,6 @@ public class FileIOV3 extends Application
         
         // Create Scene and add Grid
         Scene scene = new Scene(BPane, 300, 200); 
-//            scene.getStylesheets().add(this.getClass().getResource(
-//                    "EssentialsJPL.css").toExternalForm()); 
-        // Create the stage and add the scene
         myStage.setTitle("FileIO Application");
         myStage.setScene(scene);
         
@@ -53,8 +50,6 @@ public class FileIOV3 extends Application
                 // Variable to display text read from file
                 if(_clickMeMode)
                 {
-//                    FileInputStream in = null; 
-//                    FileOutputStream out = null; 
                     BufferedReader br = null; 
                     BufferedWriter bw = null; 
                     String line = null; 
@@ -62,33 +57,20 @@ public class FileIOV3 extends Application
                     try
                     {
                         // Code to write to file
-                        String text = textField.getText();  // textField is the user input shit !!!
-//                        byte b[] = text.getBytes(); 
+                        String text = textField.getText();     // textField is the user input shit !!!
                         String outputFileName = "testingPlaylist.txt"; 
-//                        out = new FileOutputStream(outputFileName);
-//                        out.write(b);
-//                        out.close(); 
+
                         bw = new BufferedWriter(new FileWriter (outputFileName, true));
-                        bw.newLine(); 
+//                        bw.newLine(); 
                         bw.write(text);
                         bw.close();
-                        
-                        
-                        
-                        
+
                         // Clear textField
                         textField.setText("");
                         
                         // Code to read from file
                         String inputFileName = "testingPlaylist.txt"; 
-//                        File inputFile = new File(inputFileName);  
-//                        in = new FileInputStream(inputFile); 
-//                        byte bt[] = new byte[(int) inputFile.length()]; // Create an array type byte, with the same size as the input length 
-//                        in.read(bt);                                    // Read in this array
-//                        s = new String(bt);                             // Convert this array into a string "s"
-//                        in.close();
-                        
-                        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
+//                        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
 
                         br = new BufferedReader(new FileReader (inputFileName));
                         while((line = br.readLine()) != null)
@@ -96,8 +78,7 @@ public class FileIOV3 extends Application
                             System.out.println(line);  
                             Playlist temp = new Playlist(); 
 
-                            s = br.readLine(); 
-//                            s =  br.toString();
+                            s = br.readLine();  // if data input is less than 6 characters, won't read on "s"
                         }
                         br.close(); 
                         
@@ -122,9 +103,9 @@ public class FileIOV3 extends Application
                         }
                     }
                     // Clear text field
-                    textField.setText("");  // TextField blank again         // IF "CLICK ME" IS SELECTED v
+//                    textField.setText("");  // TextField blank again         // IF "CLICK ME" IS SELECTED v
                     // Display text read from file
-                    text.setText("Text retrieved from file: \n\n " + s );    // s is read from the file 
+                    text.setText("Text retrieved from file: \n\n " + s );    // s is read from the file // SET map here? 
                     BPane.getChildren().remove(textField); 
                     button.setText("Click Again");
                     _clickMeMode = false;                                   // reset to unclicked 
@@ -132,7 +113,7 @@ public class FileIOV3 extends Application
                 else
                 {
                     // Save text to file 
-                    text.setText("Text to save to file: ");     // Label 
+                    text.setText("Text to save to file: ");     // Label  // NOT "CLICKED" YET -- ORIGINAL STATE
                     BPane.getChildren().add(textField);
                     textField.setText("");
                     button.setText("Click me");
