@@ -33,6 +33,8 @@ public class SongFileReader
     static String album;
     static String price; 
     
+
+    
     public static void main(String[] args) throws IOException 
     {
         getPlaylist(); 

@@ -3,6 +3,11 @@ import javafx.scene.control.*;
 //import javafx.geometry.*;
 //import javafx.event.*; 
 import javafx.stage.Stage;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javafx.application.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,6 +50,10 @@ public class SongDatabase extends Application
     private TextField artistField; 
     private TextField albumField; 
     private TextField priceField; 
+    
+    
+    private boolean addClicked = true; 
+
 
     public void start(Stage myStage)
     {
@@ -166,6 +175,7 @@ public class SongDatabase extends Application
         
         
         add.setOnAction(new AddHandler());
+        accept.setOnAction(new AcceptHandler());
         
         
         //3) Register an Event Handler, so handler can be notified
@@ -187,28 +197,95 @@ public class SongDatabase extends Application
         @Override
         public void handle(ActionEvent event)
         {
-            // Enable: 
-            accept.setDisable(false);
-            cancel.setDisable(false);
-            cbSong.setDisable(false);
-            itemCodeField.setDisable(false);
-            descriptionField.setDisable(false);
-            artistField.setDisable(false);
-            albumField.setDisable(false); // if N/A, assign "NONE" 
-            priceField.setDisable(false);
-            
-            // Disable: 
-            add.setDisable(true);
-            edit.setDisable(true);
-            delete.setDisable(true);
-            exit.setDisable(true);
-            
-            add.setText("Clicked"); // label will change: this is an      
+            if(addClicked)
+            {
+                // Enable: 
+                accept.setDisable(false);
+                cancel.setDisable(false);
+                cbSong.setDisable(false);
+                itemCodeField.setDisable(false);
+                descriptionField.setDisable(false);
+                artistField.setDisable(false);
+                albumField.setDisable(false); // if N/A, assign "NONE" 
+                priceField.setDisable(false);
+                
+                // Disable: 
+                add.setDisable(true);
+                edit.setDisable(true);
+                delete.setDisable(true);
+                exit.setDisable(true);
+                
+                // cbSong.getValue()
+//                writeToFile(); 
+                
+                add.setText("Clicked"); // label will change: this is an  
+            }
+    
         }
     }
     
     
+    class AcceptHandler implements EventHandler<ActionEvent>
+    {
+        @Override
+        public void handle(ActionEvent event)
+        {
+            // Write to file
+            writeToFile(); 
+            
+            // Enable
+            cbSong.setDisable(false);
+            add.setDisable(false);
+            edit.setDisable(false);
+            delete.setDisable(false);
+            exit.setDisable(false);
+            
+            // Disable
+            itemCodeField.setDisable(true);
+            descriptionField.setDisable(true);
+            artistField.setDisable(true);
+            albumField.setDisable(true);
+            priceField.setDisable(true);
+            accept.setDisable(true);
+            cancel.setDisable(true);  
+        }
+    }
     
+//    public void writeToFile(ComboBox cbSong, TextField itemCodeField, 
+//            TextField descriptionField, TextField artistField, 
+//            TextField albumField, TextField priceField)
+    public void writeToFile()
+    {
+        String fileName = "tester.txt"; 
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
+        {   
+            // Pull user input data
+            String songInfo = cbSong.getValue();
+            String itemCodeInfo = itemCodeField.getText(); 
+            String descriptionInfo = descriptionField.getText();
+            String artistInfo = artistField.getText();
+            String albumInfo = albumField.getText();
+            String priceInfo = priceField.getText();
+            
+            // write
+            bw.write(songInfo + ";" + itemCodeInfo + ";" +
+                   descriptionInfo + ";" + artistInfo + "; " + 
+                   artistInfo + ";" + albumInfo + ";" +
+                   priceInfo); 
+            bw.newLine(); 
+        }
+        catch(IOException ioe) 
+        {
+            ioe.printStackTrace();
+        } 
+        System.out.println("File created and written. Success");     
+    }
+    
+    static void writePlaylist(String fileName) 
+    {
+       
+    }
+      
     
     
     
