@@ -105,7 +105,7 @@ public class SongDatabase extends Application
         // Create an ObservableList of entries for the combo box.
         ObservableList<String> songField = 
             FXCollections.observableArrayList(
-                "No Songs selected",  "Song1" );
+                "No Songs selected" );
         
         // Create combo box.
         cbSong = new ComboBox<String> (songField);
@@ -199,6 +199,15 @@ public class SongDatabase extends Application
         {
             if(addClicked)
             {
+                // Clear field
+                // Disable
+                cbSong.setValue("");
+                itemCodeField.setText(""); 
+                descriptionField.setText(""); 
+                artistField.setText(""); 
+                albumField.setText(""); 
+                priceField.setText(""); 
+                
                 // Enable: 
                 accept.setDisable(false);
                 cancel.setDisable(false);
@@ -215,10 +224,6 @@ public class SongDatabase extends Application
                 delete.setDisable(true);
                 exit.setDisable(true);
                 
-                // cbSong.getValue()
-//                writeToFile(); 
-                
-                add.setText("Clicked"); // label will change: this is an  
             }
     
         }
@@ -229,7 +234,7 @@ public class SongDatabase extends Application
     {
         @Override
         public void handle(ActionEvent event)
-        {
+        {            
             // Write to file
             writeToFile(); 
             
@@ -250,17 +255,16 @@ public class SongDatabase extends Application
             cancel.setDisable(true);  
         }
     }
-    
-//    public void writeToFile(ComboBox cbSong, TextField itemCodeField, 
-//            TextField descriptionField, TextField artistField, 
-//            TextField albumField, TextField priceField)
+
     public void writeToFile()
     {
+        String songInfo = null;
+        
         String fileName = "tester.txt"; 
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
         {   
             // Pull user input data
-            String songInfo = cbSong.getValue();
+            songInfo = cbSong.getValue();
             String itemCodeInfo = itemCodeField.getText(); 
             String descriptionInfo = descriptionField.getText();
             String artistInfo = artistField.getText();
@@ -269,15 +273,16 @@ public class SongDatabase extends Application
             
             // write
             bw.write(songInfo + ";" + itemCodeInfo + ";" +
-                   descriptionInfo + ";" + artistInfo + "; " + 
-                   artistInfo + ";" + albumInfo + ";" +
-                   priceInfo); 
-            bw.newLine(); 
+                   descriptionInfo + ";" + artistInfo + ";" + 
+                   albumInfo + ";" + priceInfo); 
+            bw.newLine();    
         }
         catch(IOException ioe) 
         {
             ioe.printStackTrace();
         } 
+        // Add new song title to ComboBox
+        cbSong.getItems().addAll(songInfo); 
         System.out.println("File created and written. Success");     
     }
     
