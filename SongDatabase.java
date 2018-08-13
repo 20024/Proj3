@@ -40,10 +40,11 @@ public class SongDatabase extends Application
     ComboBox<String> cbSong; 
 
 //    private TextField songField; 
-//    private TextField itemCodeField;  // look at middle name small field!!!
-//    private TextField artistField; 
-//    private TextField albumField; 
-//    private TextField priceField; 
+    private TextField itemCodeField;  // look at middle name small field!!!
+    private TextField descriptionField; 
+    private TextField artistField; 
+    private TextField albumField; 
+    private TextField priceField; 
 
     public void start(Stage myStage)
     {
@@ -65,12 +66,11 @@ public class SongDatabase extends Application
         album       = new Label("Albumn: "); // if N/A, assign "NONE" 
         price       = new Label("Price: ");
         
-//        TextField songField         = new TextField(); 
-        TextField itemCodeField     = new TextField();
-        TextField descriptionField  = new TextField(); 
-        TextField artistField       = new TextField(); 
-        TextField albumField        = new TextField(); // if N/A, assign "NONE" 
-        TextField priceField        = new TextField();
+        itemCodeField     = new TextField();
+        descriptionField  = new TextField(); 
+        artistField       = new TextField(); 
+        albumField        = new TextField(); // if N/A, assign "NONE" 
+        priceField        = new TextField();
         
         add     = new Button("Add"); 
         edit    = new Button("Edit"); 
@@ -152,7 +152,21 @@ public class SongDatabase extends Application
         rootNode.add(cancel, 4, 14); // col2, row1
         rootNode.add(exit, 2, 15);
         
+        // Initial State (empty)
+        edit.setDisable(true);
+        delete.setDisable(true);
+        accept.setDisable(true);
+        cancel.setDisable(true);
+        
+        itemCodeField.setDisable(true);
+        descriptionField.setDisable(true);
+        artistField.setDisable(true);
+        albumField.setDisable(true); // if N/A, assign "NONE" 
+        priceField.setDisable(true);
+        
+        
         add.setOnAction(new AddHandler());
+        
         
         //3) Register an Event Handler, so handler can be notified
         // when user clicks on it
@@ -173,6 +187,22 @@ public class SongDatabase extends Application
         @Override
         public void handle(ActionEvent event)
         {
+            // Enable: 
+            accept.setDisable(false);
+            cancel.setDisable(false);
+            cbSong.setDisable(false);
+            itemCodeField.setDisable(false);
+            descriptionField.setDisable(false);
+            artistField.setDisable(false);
+            albumField.setDisable(false); // if N/A, assign "NONE" 
+            priceField.setDisable(false);
+            
+            // Disable: 
+            add.setDisable(true);
+            edit.setDisable(true);
+            delete.setDisable(true);
+            exit.setDisable(true);
+            
             add.setText("Clicked"); // label will change: this is an      
         }
     }

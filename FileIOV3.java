@@ -61,7 +61,7 @@ public class FileIOV3 extends Application
                         String outputFileName = "testingPlaylist.txt"; 
 
                         bw = new BufferedWriter(new FileWriter (outputFileName, true));
-//                        bw.newLine(); 
+                        bw.newLine(); 
                         bw.write(text);
                         bw.close();
 
@@ -77,7 +77,6 @@ public class FileIOV3 extends Application
                         {
                             System.out.println(line);  
                             Playlist temp = new Playlist(); 
-
                             s = br.readLine();  // if data input is less than 6 characters, won't read on "s"
                         }
                         br.close(); 
@@ -102,6 +101,9 @@ public class FileIOV3 extends Application
                             System.out.println("Cannot close");
                         }
                     }
+                    /**
+                     * This is POST user input & clicked button
+                     */
                     // Clear text field
 //                    textField.setText("");  // TextField blank again         // IF "CLICK ME" IS SELECTED v
                     // Display text read from file
@@ -112,6 +114,10 @@ public class FileIOV3 extends Application
                 }
                 else
                 {
+                    /**
+                     * This is like the original state, (BUT AFTER ONE ROUND) 
+                     * before user typed and clicked button
+                     */
                     // Save text to file 
                     text.setText("Text to save to file: ");     // Label  // NOT "CLICKED" YET -- ORIGINAL STATE
                     BPane.getChildren().add(textField);
