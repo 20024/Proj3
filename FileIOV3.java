@@ -1,7 +1,12 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.TreeMap;
 
 import javafx.application.Application; 
 import javafx.event.ActionEvent; 
@@ -14,7 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage; 
 
 
-public class FileIO extends Application 
+public class FileIOV3 extends Application 
 {
     TextField textField; 
     Label text, clicked; 
@@ -44,50 +49,72 @@ public class FileIO extends Application
         {
             public void handle(ActionEvent event)
             {
-                Object source = event.getSource(); 
                 String s = null; 
                 // Variable to display text read from file
                 if(_clickMeMode)
                 {
-                    FileInputStream in = null; 
-                    FileOutputStream out = null; 
+//                    FileInputStream in = null; 
+//                    FileOutputStream out = null; 
+                    BufferedReader br = null; 
+                    BufferedWriter bw = null; 
+                    String line = null; 
+
                     try
                     {
                         // Code to write to file
-                        String text = textField.getText(); 
-                        byte b[] = text.getBytes(); 
-                        String outputFileName = System.getProperty("user.home", 
-                            File.separatorChar + "home"
-                            + File.separatorChar + "monica")
-                            + File.separatorChar + "text.txt";
-                        out = new FileOutputStream(outputFileName);
-                        out.write(b);
-                        out.close(); 
+                        String text = textField.getText();  // textField is the user input shit !!!
+//                        byte b[] = text.getBytes(); 
+                        String outputFileName = "testingPlaylist.txt"; 
+//                        out = new FileOutputStream(outputFileName);
+//                        out.write(b);
+//                        out.close(); 
+                        bw = new BufferedWriter(new FileWriter (outputFileName, true));
+                        bw.newLine(); 
+                        bw.write(text);
+                        bw.close();
+                        
+                        
+                        
+                        
                         // Clear textField
                         textField.setText("");
+                        
                         // Code to read from file
-//                        String inputFileName = System.getProperty("user.home",
-//                            File.separatorChar + "home"
-//                            + File.separatorChar + "monica")
-//                            + File.separatorChar + "text.txt";
                         String inputFileName = "testingPlaylist.txt"; 
-                        File inputFile = new File(inputFileName);
-                        in = new FileInputStream(inputFile); 
-                        byte bt[] = new byte[(int) inputFile.length()]; 
-                        in.read(bt); 
-                        s = new String(bt); 
-                        in.close();
+//                        File inputFile = new File(inputFileName);  
+//                        in = new FileInputStream(inputFile); 
+//                        byte bt[] = new byte[(int) inputFile.length()]; // Create an array type byte, with the same size as the input length 
+//                        in.read(bt);                                    // Read in this array
+//                        s = new String(bt);                             // Convert this array into a string "s"
+//                        in.close();
+                        
+                        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
+
+                        br = new BufferedReader(new FileReader (inputFileName));
+                        while((line = br.readLine()) != null)
+                        {
+                            System.out.println(line);  
+                            Playlist temp = new Playlist(); 
+
+                            s = br.readLine(); 
+//                            s =  br.toString();
+                        }
+                        br.close(); 
+                        
+                        
                     }
                     catch (IOException e)
                     {
-                        System.out.println("Cannot access text.txt");     
+                        System.out.println("Cannot access testingPlaylist.txt");     
                     }
                     finally
                     {
                         try
                         {
-                            in.close(); 
-                            out.close(); 
+//                            in.close(); 
+//                            out.close(); 
+                            br.close();
+                            bw.close();
                         }
                         catch(IOException e)
                         {
@@ -95,17 +122,17 @@ public class FileIO extends Application
                         }
                     }
                     // Clear text field
-                    textField.setText("");
+                    textField.setText("");  // TextField blank again         // IF "CLICK ME" IS SELECTED v
                     // Display text read from file
-                    text.setText("Text retrieved from file: \n\n " + s);
+                    text.setText("Text retrieved from file: \n\n " + s );    // s is read from the file 
                     BPane.getChildren().remove(textField); 
                     button.setText("Click Again");
-                    _clickMeMode = false; 
+                    _clickMeMode = false;                                   // reset to unclicked 
                 }
                 else
                 {
                     // Save text to file 
-                    text.setText("Text to save to file: ");
+                    text.setText("Text to save to file: ");     // Label 
                     BPane.getChildren().add(textField);
                     textField.setText("");
                     button.setText("Click me");

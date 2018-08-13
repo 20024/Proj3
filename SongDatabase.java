@@ -114,7 +114,8 @@ public class SongDatabase extends Application
         cbSong.setEditable(true); // use for the "edit"? of prj3
         
         // Listen for action events on the combo box
-        cbSong.setOnAction(new EventHandler<ActionEvent>()
+        cbSong.setOnAction(
+            new EventHandler<ActionEvent>()
             {
                 public void handle(ActionEvent ae) 
                 {
@@ -122,13 +123,12 @@ public class SongDatabase extends Application
                         cbSong.getValue());
                     
                 }
-            });
+            }
+        );
         
         // Arrange node in grid
         rootNode.add(song, 0,0);
         rootNode.add(cbSong, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
-   
-        
         
         rootNode.add(itemCode, 0, 1); // col1, row1 
         rootNode.add(itemCodeField, 1, 1, 4, 1); // col2, row1 //<===== MAKE SMALLER!! 
@@ -152,6 +152,8 @@ public class SongDatabase extends Application
         rootNode.add(cancel, 4, 14); // col2, row1
         rootNode.add(exit, 2, 15);
         
+        add.setOnAction(new AddHandler());
+        
         //3) Register an Event Handler, so handler can be notified
         // when user clicks on it
 //        myButton.setOnAction(new ButtonHandler()); // setOnAction() HANDLERRRRRR
@@ -166,6 +168,32 @@ public class SongDatabase extends Application
         myStage.show();
     }  
 
+    class AddHandler implements EventHandler<ActionEvent>
+    {
+        @Override
+        public void handle(ActionEvent event)
+        {
+            add.setText("Clicked"); // label will change: this is an      
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static void main(String[] args)
     {
         launch(args); 

@@ -14,13 +14,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage; 
 
 
-public class FileIO extends Application 
+public class FileIOV2 extends Application 
 {
     TextField textField; 
     Label text, clicked; 
     Button button, clickButton; 
     BorderPane BPane; 
     private boolean _clickMeMode = true; 
+    
+    
     
     public void start(Stage myStage)
     {
@@ -49,38 +51,34 @@ public class FileIO extends Application
                 // Variable to display text read from file
                 if(_clickMeMode)
                 {
+                    
                     FileInputStream in = null; 
                     FileOutputStream out = null; 
                     try
                     {
                         // Code to write to file
-                        String text = textField.getText(); 
+                        String text = textField.getText();  // textField is the user input shit !!!
                         byte b[] = text.getBytes(); 
-                        String outputFileName = System.getProperty("user.home", 
-                            File.separatorChar + "home"
-                            + File.separatorChar + "monica")
-                            + File.separatorChar + "text.txt";
-                        out = new FileOutputStream(outputFileName);
+                        String outputFileName = "testingPlaylist2.txt"; 
+                        out = new FileOutputStream(outputFileName, true);
                         out.write(b);
                         out.close(); 
+                        
                         // Clear textField
                         textField.setText("");
+                        
                         // Code to read from file
-//                        String inputFileName = System.getProperty("user.home",
-//                            File.separatorChar + "home"
-//                            + File.separatorChar + "monica")
-//                            + File.separatorChar + "text.txt";
-                        String inputFileName = "testingPlaylist.txt"; 
-                        File inputFile = new File(inputFileName);
+                        String inputFileName = "testingPlaylist2.txt"; 
+                        File inputFile = new File(inputFileName);  
                         in = new FileInputStream(inputFile); 
-                        byte bt[] = new byte[(int) inputFile.length()]; 
-                        in.read(bt); 
-                        s = new String(bt); 
+                        byte bt[] = new byte[(int) inputFile.length()]; // Create an array type byte, with the same size as the input length 
+                        in.read(bt);                                    // Read in this array
+                        s = new String(bt);                             // Convert this array into a string "s"
                         in.close();
                     }
                     catch (IOException e)
                     {
-                        System.out.println("Cannot access text.txt");     
+                        System.out.println("Cannot access testingPlaylist.txt");     
                     }
                     finally
                     {
@@ -95,17 +93,17 @@ public class FileIO extends Application
                         }
                     }
                     // Clear text field
-                    textField.setText("");
+                    textField.setText("");  // TextField blank again         // IF "CLICK ME" IS SELECTED v
                     // Display text read from file
-                    text.setText("Text retrieved from file: \n\n " + s);
+                    text.setText("Text retrieved from file: \n\n " + s);    // s is read from the file 
                     BPane.getChildren().remove(textField); 
                     button.setText("Click Again");
-                    _clickMeMode = false; 
+                    _clickMeMode = false;                                   // reset to unclicked 
                 }
                 else
                 {
                     // Save text to file 
-                    text.setText("Text to save to file: ");
+                    text.setText("Text to save to file: ");     // Label 
                     BPane.getChildren().add(textField);
                     textField.setText("");
                     button.setText("Click me");
