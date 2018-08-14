@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
+//import java.util.Map.Entry;
 import java.util.TreeMap;
 import javafx.application.*;
 import javafx.beans.value.ObservableValue;
@@ -58,7 +58,7 @@ public class SongDatabase extends Application
     private boolean addClicked = true; 
     private boolean deleteClicked; 
     private boolean editClicked; 
-    
+    Stage myStage; 
     
     TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
 
@@ -135,8 +135,8 @@ public class SongDatabase extends Application
         delete.setOnAction(new DeleteHandler());
         edit.setOnAction(new EditHandler()); 
         cancel.setOnAction(new CancelHandler());
+        exit.setOnAction(e -> Platform.exit());
         
-
         /**
          * COMBO BOX SELECTION LISTENER
          * This Change Listener fills up the song's properties
@@ -161,9 +161,7 @@ public class SongDatabase extends Application
                   priceField.setText(column[5]); 
               }
         });
-        
 
-  
         // Arrange node in grid
         rootNode.add(song, 0,0);
         rootNode.add(cbSong, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
@@ -193,7 +191,7 @@ public class SongDatabase extends Application
         myStage.setScene(myScene);
         myStage.show();
     }  
-
+    
     class AddHandler implements EventHandler<ActionEvent>
     {
         @Override
