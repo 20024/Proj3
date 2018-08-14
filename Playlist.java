@@ -91,5 +91,11 @@ public class Playlist
         return song + ";" + itemCode + ";" + description + ";"
                 + artist + ";" + album + ";" + price;
     }
+
+    public Playlist[] split(String string)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
       
 }

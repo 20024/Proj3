@@ -18,9 +18,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 
 
 
@@ -41,7 +39,6 @@ public class SongDatabase extends Application
     private Label artist; 
     private Label album;
     private Label price; 
-    private Label response; 
     
     // Initialize Combo box 
     ComboBox<String> cbSong; 
@@ -63,8 +60,6 @@ public class SongDatabase extends Application
     
     private boolean addClicked = true; 
     TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
-
-
 
     public void start(Stage myStage)
     {
@@ -106,12 +101,6 @@ public class SongDatabase extends Application
         accept.setPrefWidth(80);
         cancel.setPrefWidth(80);
         exit.setPrefWidth(60);
-        
-        
-        // Set number of spaces in the TextField
-        
-
-        
    
         // Create an ObservableList of entries for the combo box.
         ObservableList<String> songField = 
@@ -128,22 +117,43 @@ public class SongDatabase extends Application
 //        response.setText("Selected Transport is " + 
 //                cbSong.getValue());
         
-        /**
-         * allow user to edit selection
-         */
+//        /**
+//         * allow user to edit selection
+//         */
         cbSong.setEditable(true); // use for the "edit"? of prj3
+//        
+//        // Listen for action events on the combo box
+//        cbSong.setOnAction(
+//            new EventHandler<ActionEvent>()
+//            {
+//                public void handle(ActionEvent ae) 
+//                {
+//                    cbSong.getSelectionModel().getSelectedItem(); 
+//                }
+//            }
+//        );
+//        
         
-        // Listen for action events on the combo box
-        cbSong.setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-                public void handle(ActionEvent ae) 
-                {
-                    cbSong.getSelectionModel().getSelectedItem(); 
-                }
-            }
-        );
         
+        // Initial State (empty)
+        edit.setDisable(true);
+        delete.setDisable(true);
+        accept.setDisable(true);
+        cancel.setDisable(true);
+        
+        itemCodeField.setDisable(true);
+        descriptionField.setDisable(true);
+        artistField.setDisable(true);
+        albumField.setDisable(true); // if N/A, assign "NONE" 
+        priceField.setDisable(true);
+        
+        
+        add.setOnAction(new AddHandler());
+        accept.setOnAction(new AcceptHandler());
+        cbSong.setOnAction(new CBSongHandler()); // to display when toggle bw song titles
+        
+        
+
         // Arrange node in grid
         rootNode.add(song, 0,0);
         rootNode.add(cbSong, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
@@ -169,35 +179,7 @@ public class SongDatabase extends Application
         rootNode.add(accept, 3, 14); // col1, row1
         rootNode.add(cancel, 4, 14); // col2, row1
         rootNode.add(exit, 2, 15);
-        
-        // Initial State (empty)
-        edit.setDisable(true);
-        delete.setDisable(true);
-        accept.setDisable(true);
-        cancel.setDisable(true);
-        
-        itemCodeField.setDisable(true);
-        descriptionField.setDisable(true);
-        artistField.setDisable(true);
-        albumField.setDisable(true); // if N/A, assign "NONE" 
-        priceField.setDisable(true);
-        
-        
-        add.setOnAction(new AddHandler());
-        accept.setOnAction(new AcceptHandler());
-        cbSong.setOnAction(new CBSongHandler()); // to display when toggle bw song titles
-        
-        
-        //3) Register an Event Handler, so handler can be notified
-        // when user clicks on it
-//        myButton.setOnAction(new ButtonHandler()); // setOnAction() HANDLERRRRRR
-        
-        
-//        BorderPane borderPane = new BorderPane();
-//        borderPane.setCenter(rootNode);
-//        
-//        myStage.setTitle("What is this" );
-//        
+         
         myStage.setScene(myScene);
         myStage.show();
     }  
@@ -232,10 +214,8 @@ public class SongDatabase extends Application
                 add.setDisable(true);
                 edit.setDisable(true);
                 delete.setDisable(true);
-                exit.setDisable(true);
-                
+                exit.setDisable(true);         
             }
-    
         }
     }
     
@@ -251,8 +231,11 @@ public class SongDatabase extends Application
             // Add to treemap
             putToTreeMap();
             
+            // Disable editing in combo box
+            cbSong.setEditable(true);
+            
             // Enable
-            cbSong.setDisable(false);
+            cbSong.setDisable(false); // CHANGED HERE!!!
             add.setDisable(false);
             edit.setDisable(false);
             delete.setDisable(false);
@@ -284,7 +267,6 @@ public class SongDatabase extends Application
             priceInfo = priceField.getText();
 
             System.out.println("This is the map size: " + playlistMap.size() );
-            
             
             // write
             bw.write(songInfo + ";" + itemCodeInfo + ";" +
@@ -333,20 +315,15 @@ public class SongDatabase extends Application
     public void getFromTreeMap()
     {
         // Split up the key where user toggled to in ComboBox
-        // Assign them to TextField Value and comboBox values
-
-        
-        
-        String value = 
-            (String) cbSong.getSelectionModel().getSelectedItem().toString(); //getValue(); 
-        
-        String[] column = value.split(";");
-        cbSong.setValue(column[0].trim());  // cbSong.setValue(cbSong.getValue()); 
-        itemCodeField.setText(column[1]);//.trim()); 
-        descriptionField.setText(column[2]);//.trim());
-        artistField.setText(column[3]);//.trim());
-        albumField.setText(column[4]);//.trim());
-        priceField.setText(column[4]); //.trim());
+        // Assign them to TextField Value and comboBox values 
+        for (Map.Entry<String, Playlist> p: playlistMap.entrySet())//contactMap.entrySet())
+        //for(Contact c: contactMap.values())
+        {
+            System.out.println(p.getKey() + " : " +  // to print in console
+                    p.getValue() );
+            
+            // split up the getValue() --- then assign to gui display ; 
+        }      
     }
   
     public static void main(String[] args)
