@@ -57,6 +57,7 @@ public class SongDatabase extends Application
     
     
     private boolean addClicked = true; 
+    private boolean deleteClicked; 
     TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
 
     public void start(Stage myStage)
@@ -103,13 +104,13 @@ public class SongDatabase extends Application
         // Create an ObservableList of entries for the combo box.
         ObservableList<String> songField = 
             FXCollections.observableArrayList(
-                "No Songs selected" );
+                "No Songs Selected" );
         
         // Create combo box.
         cbSong = new ComboBox<String> (songField);
         
         // Set the default value
-        cbSong.setValue("No Songs selected");
+        cbSong.setValue("No Songs Selected");
         
         cbSong.setEditable(true); 
   
@@ -192,6 +193,7 @@ public class SongDatabase extends Application
         @Override
         public void handle(ActionEvent event)
         {
+            addClicked = true;
             if(addClicked)
             {
                 // Clear field
@@ -217,7 +219,7 @@ public class SongDatabase extends Application
                 add.setDisable(true);
                 edit.setDisable(true);
                 delete.setDisable(true);
-                exit.setDisable(true);         
+                exit.setDisable(true);        
             }
         }
     }
@@ -227,37 +229,72 @@ public class SongDatabase extends Application
     {
         @Override
         public void handle(ActionEvent event)
-        {            
-            // Write to file
-            writeToFile(); 
+        {   
+            if(addClicked)
+            {
+                // Write to file
+                writeToFile();   
+                // Add to treemap
+                putToTreeMap();
+                
+                // Disable editing in combo box
+                cbSong.setEditable(true);
+                
+                // Enable
+                cbSong.setDisable(false); 
+                add.setDisable(false);
+                edit.setDisable(false);
+                delete.setDisable(false);
+                exit.setDisable(false);
+                
+                // Disable
+                itemCodeField.setDisable(true);
+                descriptionField.setDisable(true);
+                artistField.setDisable(true);
+                albumField.setDisable(true);
+                priceField.setDisable(true);
+                accept.setDisable(true);
+                cancel.setDisable(true);  
+                
+                // Reset addClicked to false
+                addClicked = false; 
+            }
             
-            // Add to treemap
-            putToTreeMap();
+            if(deleteClicked)
+            {
+                removeFromTreeMap(); 
+                removeFromFile(); 
+                
+                // Disable editing in combo box
+                cbSong.setEditable(true);
+                
+                // Enable
+                cbSong.setDisable(false); 
+                add.setDisable(false);
+                edit.setDisable(false);
+                delete.setDisable(false);
+                exit.setDisable(false);
+                
+                // Disable
+                itemCodeField.setDisable(true);
+                descriptionField.setDisable(true);
+                artistField.setDisable(true);
+                albumField.setDisable(true);
+                priceField.setDisable(true);
+                accept.setDisable(true);
+                cancel.setDisable(true);  
+                
+                // Reset addClicked to false
+                deleteClicked = false; 
+            }
             
-            // Disable editing in combo box
-            cbSong.setEditable(true);
             
-            // Enable
-            cbSong.setDisable(false); // CHANGED HERE!!!
-            add.setDisable(false);
-            edit.setDisable(false);
-            delete.setDisable(false);
-            exit.setDisable(false);
-            
-            // Disable
-            itemCodeField.setDisable(true);
-            descriptionField.setDisable(true);
-            artistField.setDisable(true);
-            albumField.setDisable(true);
-            priceField.setDisable(true);
-            accept.setDisable(true);
-            cancel.setDisable(true);  
+
         }
     }
 
     public void writeToFile()
-    {
-        
+    {  
         String fileName = "tester.txt"; 
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
         {   
@@ -312,30 +349,33 @@ public class SongDatabase extends Application
         @Override
         public void handle(ActionEvent event)
         { 
-            removeFromTreeMap(); 
-            removeFromFile(); 
-            
-            // Enable
-            accept.setDisable(false);
-            cancel.setDisable(false);
-            
-            // Disable
-            cbSong.setDisable(true); 
-            itemCodeField.setDisable(true);
-            descriptionField.setDisable(true);
-            artistField.setDisable(true);
-            albumField.setDisable(true);
-            priceField.setDisable(true); 
-            add.setDisable(true);
-            edit.setDisable(true);
-            delete.setDisable(true);
-            exit.setDisable(true);
+            deleteClicked = true;
+            if(deleteClicked)
+            {
+                // Enable
+                accept.setDisable(false);
+                cancel.setDisable(false);
+                
+                // Disable
+                cbSong.setDisable(true); 
+                itemCodeField.setDisable(true);
+                descriptionField.setDisable(true);
+                artistField.setDisable(true);
+                albumField.setDisable(true);
+                priceField.setDisable(true); 
+                add.setDisable(true);
+                edit.setDisable(true);
+                delete.setDisable(true);
+                exit.setDisable(true);
+            }
         }
     }
     
     public void removeFromTreeMap()
     {
         playlistMap.remove(cbSong.getValue());
+        cbSong.getItems().remove("No Songs Selected"); 
+        cbSong.getItems().remove(cbSong.getValue());
     }
     
     
@@ -343,25 +383,30 @@ public class SongDatabase extends Application
     { // After removing from the map, we will write the new map to the file. 
         
         String fileName = "tester.txt"; 
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
+        // note, no "true" so we can overwrite the whole file!!!
+        try(BufferedWriter bw = new BufferedWriter(
+                new FileWriter(fileName))) 
         {   
             System.out.println("This is the map size: " + playlistMap.size() );
+             // Clear all items in combo box
 
             for(Map.Entry<String, Playlist> p: playlistMap.entrySet())
             {
                 bw.write("" +  p.getValue() );// our map's value has same content as line in the text file
                 bw.newLine();
                 bw.flush(); 
+//                cbSong.getItems(); // add each item to combo box 
             }            
         }
         catch(IOException ioe) 
         {
             ioe.printStackTrace();
         } 
-        // Add new song title to ComboBox
-        cbSong.getItems().remove("No Songs selected"); 
-        cbSong.getItems().addAll(songInfo); 
-        System.out.println("File created and written. Success");   
+//        // Add new song title to ComboBox
+
+//        cbSong.getItems().addAll(songInfo); 
+//        System.out.println("File created and written. Success");  
+        
     }
     
     public static void main(String[] args)
