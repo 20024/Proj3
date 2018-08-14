@@ -134,6 +134,7 @@ public class SongDatabase extends Application
         accept.setOnAction(new AcceptHandler());
         delete.setOnAction(new DeleteHandler());
         edit.setOnAction(new EditHandler()); 
+        cancel.setOnAction(new CancelHandler());
         
 
         /**
@@ -262,7 +263,55 @@ public class SongDatabase extends Application
             }
         }
     }
+    // 1. delete from treemap
+    // 2. delete from text file --write from treemap to same file
+    class DeleteHandler implements EventHandler<ActionEvent>
+    {
+        @Override
+        public void handle(ActionEvent event)
+        { 
+            deleteClicked = true;
+            if(deleteClicked)
+            {
+                // Enable
+                accept.setDisable(false);
+                cancel.setDisable(false);
+                
+                // Disable
+                cbSong.setDisable(true); 
+                itemCodeField.setDisable(true);
+                descriptionField.setDisable(true);
+                artistField.setDisable(true);
+                albumField.setDisable(true);
+                priceField.setDisable(true); 
+                add.setDisable(true);
+                edit.setDisable(true);
+                delete.setDisable(true);
+                exit.setDisable(true);
+            }
+        }
+    }
 
+    class CancelHandler implements EventHandler<ActionEvent>
+    {
+        @Override
+        public void handle(ActionEvent event)
+        {   
+            if(addClicked)
+            {
+                defaultButtonDisplay(); 
+            }
+            if(editClicked)
+            {
+                defaultButtonDisplay();
+            }
+            if(deleteClicked)
+            {
+                defaultButtonDisplay();
+            }
+        }
+    }
+           
     
     class AcceptHandler implements EventHandler<ActionEvent>
     {
@@ -328,9 +377,6 @@ public class SongDatabase extends Application
             }
             if(editClicked)
             {
-                // Find cbSong.getValue();
-                // Delete cbSong.getValue(); 
-                // get new values? 
                 playlistMap.remove(itemCodeField.getText()); // might move to EditHandler()
                 
                 // Pull user input data
@@ -346,9 +392,8 @@ public class SongDatabase extends Application
                 
                 
                 playlistMap.put(cbSong.getValue(), playlist);
-//                playlistMap.put(itemCodeField.getText(), playlist);
                 
-                // more like write everything from map to file again
+                // More like write everything from map to file again
                 removeFromFile(); 
                 
                 // Enable
@@ -369,9 +414,6 @@ public class SongDatabase extends Application
                 
                 editClicked = false; 
             }
-            
-            
-
         }
     }
 
@@ -405,6 +447,35 @@ public class SongDatabase extends Application
         System.out.println("File created and written. Success");   
     }
     
+    
+    
+    public void defaultButtonDisplay()
+    {
+        // Clear field
+        cbSong.setValue("");
+        itemCodeField.setText(""); 
+        descriptionField.setText(""); 
+        artistField.setText(""); 
+        albumField.setText(""); 
+        priceField.setText(""); 
+        
+        // Enable
+        cbSong.setDisable(false); 
+        add.setDisable(false);
+        edit.setDisable(false);
+        delete.setDisable(false);
+        exit.setDisable(false);
+        
+        // Disable
+        itemCodeField.setDisable(true);
+        descriptionField.setDisable(true);
+        artistField.setDisable(true);
+        albumField.setDisable(true);
+        priceField.setDisable(true);
+        accept.setDisable(true);
+        cancel.setDisable(true);  
+    }
+    
     /**
      * this method adds song entered by the user 
      * to the TreeMap playlistMap for "temp storage". 
@@ -426,34 +497,7 @@ public class SongDatabase extends Application
     }
     
     
-    // 1. delete from treemap
-    // 2. delete from text file --write from treemap to same file
-    class DeleteHandler implements EventHandler<ActionEvent>
-    {
-        @Override
-        public void handle(ActionEvent event)
-        { 
-            deleteClicked = true;
-            if(deleteClicked)
-            {
-                // Enable
-                accept.setDisable(false);
-                cancel.setDisable(false);
-                
-                // Disable
-                cbSong.setDisable(true); 
-                itemCodeField.setDisable(true);
-                descriptionField.setDisable(true);
-                artistField.setDisable(true);
-                albumField.setDisable(true);
-                priceField.setDisable(true); 
-                add.setDisable(true);
-                edit.setDisable(true);
-                delete.setDisable(true);
-                exit.setDisable(true);
-            }
-        }
-    }
+
     
     public void removeFromTreeMap()
     {
