@@ -53,6 +53,7 @@ public class SongDatabase extends Application
     String priceInfo = null; 
     
     Playlist newVal;
+    Playlist playlist;
     
     private boolean addClicked = true; 
     private boolean deleteClicked; 
@@ -271,7 +272,7 @@ public class SongDatabase extends Application
             if(addClicked)
             {
                 // Write to file
-                writeToFile();   
+                writeToFile();   // <======== do we put to map first?? 
                 // Add to treemap
                 putToTreeMap();
                 
@@ -325,11 +326,48 @@ public class SongDatabase extends Application
                 // Reset addClicked to false
                 deleteClicked = false; 
             }
-            if(addClicked)
+            if(editClicked)
             {
+                // Find cbSong.getValue();
+                // Delete cbSong.getValue(); 
+                // get new values? 
+                playlistMap.remove(itemCodeField.getText()); // might move to EditHandler()
+                
+                // Pull user input data
+                songInfo = cbSong.getValue();
+                itemCodeInfo = itemCodeField.getText(); 
+                descriptionInfo = descriptionField.getText();
+                artistInfo = artistField.getText();
+                albumInfo = albumField.getText();
+                priceInfo = priceField.getText();
+                
+                playlist = new Playlist(songInfo,  itemCodeInfo, 
+                        descriptionInfo, artistInfo, albumInfo, priceInfo);
                 
                 
-                addClicked = false; 
+                playlistMap.put(cbSong.getValue(), playlist);
+//                playlistMap.put(itemCodeField.getText(), playlist);
+                
+                // more like write everything from map to file again
+                removeFromFile(); 
+                
+                // Enable
+                cbSong.setDisable(false); 
+                add.setDisable(false);
+                edit.setDisable(false);
+                delete.setDisable(false);
+                exit.setDisable(false);
+                
+                // Disable
+                itemCodeField.setDisable(true);
+                descriptionField.setDisable(true);
+                artistField.setDisable(true);
+                albumField.setDisable(true);
+                priceField.setDisable(true);
+                accept.setDisable(true);
+                cancel.setDisable(true);  
+                
+                editClicked = false; 
             }
             
             
@@ -376,10 +414,12 @@ public class SongDatabase extends Application
      */
     public void putToTreeMap()
     {
-        Playlist playlist = new Playlist(songInfo,  itemCodeInfo, 
+        playlist = new Playlist(songInfo,  itemCodeInfo, 
                 descriptionInfo, artistInfo, albumInfo, priceInfo);
         
+        
         playlistMap.put(cbSong.getValue(), playlist);
+//        playlistMap.put(itemCodeField.getText(), playlist);
         cbSong.getItems().remove("No Songs Selected");
       
         System.out.println("playlistMap size: " + playlistMap.size()); 
@@ -418,6 +458,7 @@ public class SongDatabase extends Application
     public void removeFromTreeMap()
     {
         playlistMap.remove(cbSong.getValue());
+//        playlistMap.remove(itemCodeField.getText());
         cbSong.getItems().remove("No Songs Selected"); 
         cbSong.getItems().remove(cbSong.getValue());
     }
