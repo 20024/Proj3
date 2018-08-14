@@ -39,7 +39,6 @@ public class SongDatabase extends Application
     // Initialize Combo box 
     ComboBox<String> cbSong; 
 
-//    private TextField songField; 
     private TextField itemCodeField;  // look at middle name small field!!!
     private TextField descriptionField; 
     private TextField artistField; 
@@ -55,9 +54,11 @@ public class SongDatabase extends Application
     
     Playlist newVal;
     
-    
     private boolean addClicked = true; 
     private boolean deleteClicked; 
+    private boolean editClicked; 
+    
+    
     TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
 
     public void start(Stage myStage)
@@ -130,6 +131,9 @@ public class SongDatabase extends Application
         
         add.setOnAction(new AddHandler());
         accept.setOnAction(new AcceptHandler());
+        delete.setOnAction(new DeleteHandler());
+        edit.setOnAction(new EditHandler()); 
+        
 
         /**
          * COMBO BOX SELECTION LISTENER
@@ -156,7 +160,7 @@ public class SongDatabase extends Application
               }
         });
         
-        delete.setOnAction(new DeleteHandler());
+
   
         // Arrange node in grid
         rootNode.add(song, 0,0);
@@ -224,6 +228,40 @@ public class SongDatabase extends Application
         }
     }
     
+    class EditHandler implements EventHandler<ActionEvent>
+    {
+        @Override
+        public void handle(ActionEvent event)
+        {
+            editClicked = true;
+            if(editClicked)
+            {
+                // Allow TextField to be editted
+                cbSong.setEditable(true);
+                descriptionField.setEditable(true);
+                artistField.setEditable(true);
+                albumField.setEditable(true);
+                priceField.setEditable(true);
+
+                // Enable 
+                cbSong.setDisable(false);
+                descriptionField.setDisable(false);
+                artistField.setDisable(false);
+                albumField.setDisable(false);
+                priceField.setDisable(false);
+                accept.setDisable(false);
+                cancel.setDisable(false);
+                
+                // Disable
+                itemCodeField.setDisable(true);
+                add.setDisable(true);
+                edit.setDisable(true);
+                delete.setDisable(true);
+                exit.setDisable(true);
+            }
+        }
+    }
+
     
     class AcceptHandler implements EventHandler<ActionEvent>
     {
@@ -287,6 +325,12 @@ public class SongDatabase extends Application
                 // Reset addClicked to false
                 deleteClicked = false; 
             }
+            if(addClicked)
+            {
+                
+                
+                addClicked = false; 
+            }
             
             
 
@@ -319,7 +363,6 @@ public class SongDatabase extends Application
             ioe.printStackTrace();
         } 
         // Add new song title to ComboBox
-        cbSong.getItems().remove("No Songs selected"); 
         cbSong.getItems().addAll(songInfo); 
         System.out.println("File created and written. Success");   
     }
@@ -337,6 +380,7 @@ public class SongDatabase extends Application
                 descriptionInfo, artistInfo, albumInfo, priceInfo);
         
         playlistMap.put(cbSong.getValue(), playlist);
+        cbSong.getItems().remove("No Songs Selected");
       
         System.out.println("playlistMap size: " + playlistMap.size()); 
     }
