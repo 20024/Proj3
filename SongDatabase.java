@@ -1,12 +1,10 @@
 import javafx.scene.control.*; 
-//import javafx.scene.*; 
-//import javafx.geometry.*;
-//import javafx.event.*; 
 import javafx.stage.Stage;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import javafx.application.*;
 import javafx.beans.value.ObservableValue;
@@ -19,9 +17,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.beans.value.ChangeListener;
-
-
-
 
 public class SongDatabase extends Application
 {
@@ -136,6 +131,7 @@ public class SongDatabase extends Application
         accept.setOnAction(new AcceptHandler());
 
         /**
+         * COMBO BOX SELECTION LISTENER
          * This Change Listener fills up the song's properties
          * when user select the song from the combo box. 
          * 
@@ -155,11 +151,12 @@ public class SongDatabase extends Application
                   descriptionField.setText(column[2]);
                   artistField.setText(column[3]); 
                   albumField.setText(column[4]);
-                 priceField.setText(column[5]); 
+                  priceField.setText(column[5]); 
               }
         });
-  
         
+        delete.setOnAction(new DeleteHandler());
+  
         // Arrange node in grid
         rootNode.add(song, 0,0);
         rootNode.add(cbSong, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
@@ -290,6 +287,13 @@ public class SongDatabase extends Application
         System.out.println("File created and written. Success");   
     }
     
+    /**
+     * this method adds song entered by the user 
+     * to the TreeMap playlistMap for "temp storage". 
+     * 
+     * We will use playlistMap when calling the information
+     * by toggling between song titles. 
+     */
     public void putToTreeMap()
     {
         Playlist playlist = new Playlist(songInfo,  itemCodeInfo, 
@@ -298,6 +302,66 @@ public class SongDatabase extends Application
         playlistMap.put(cbSong.getValue(), playlist);
       
         System.out.println("playlistMap size: " + playlistMap.size()); 
+    }
+    
+    
+    // 1. delete from treemap
+    // 2. delete from text file --write from treemap to same file
+    class DeleteHandler implements EventHandler<ActionEvent>
+    {
+        @Override
+        public void handle(ActionEvent event)
+        { 
+            removeFromTreeMap(); 
+            removeFromFile(); 
+            
+            // Enable
+            accept.setDisable(false);
+            cancel.setDisable(false);
+            
+            // Disable
+            cbSong.setDisable(true); 
+            itemCodeField.setDisable(true);
+            descriptionField.setDisable(true);
+            artistField.setDisable(true);
+            albumField.setDisable(true);
+            priceField.setDisable(true); 
+            add.setDisable(true);
+            edit.setDisable(true);
+            delete.setDisable(true);
+            exit.setDisable(true);
+        }
+    }
+    
+    public void removeFromTreeMap()
+    {
+        playlistMap.remove(cbSong.getValue());
+    }
+    
+    
+    public void removeFromFile()
+    { // After removing from the map, we will write the new map to the file. 
+        
+        String fileName = "tester.txt"; 
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
+        {   
+            System.out.println("This is the map size: " + playlistMap.size() );
+
+            for(Map.Entry<String, Playlist> p: playlistMap.entrySet())
+            {
+                bw.write("" +  p.getValue() );// our map's value has same content as line in the text file
+                bw.newLine();
+                bw.flush(); 
+            }            
+        }
+        catch(IOException ioe) 
+        {
+            ioe.printStackTrace();
+        } 
+        // Add new song title to ComboBox
+        cbSong.getItems().remove("No Songs selected"); 
+        cbSong.getItems().addAll(songInfo); 
+        System.out.println("File created and written. Success");   
     }
     
     public static void main(String[] args)
