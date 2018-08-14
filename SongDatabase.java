@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javafx.application.*;
 import javafx.collections.FXCollections;
@@ -51,8 +53,17 @@ public class SongDatabase extends Application
     private TextField albumField; 
     private TextField priceField; 
     
+    String songInfo = null;
+    String itemCodeInfo = null; 
+    String descriptionInfo = null; 
+    String artistInfo = null;
+    String albumInfo = null; 
+    String priceInfo = null; 
+    
     
     private boolean addClicked = true; 
+    TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
+
 
 
     public void start(Stage myStage)
@@ -128,9 +139,7 @@ public class SongDatabase extends Application
             {
                 public void handle(ActionEvent ae) 
                 {
-                    response.setText("Selected Transport is " + 
-                        cbSong.getValue());
-                    
+                    cbSong.getSelectionModel().getSelectedItem(); 
                 }
             }
         );
@@ -176,6 +185,7 @@ public class SongDatabase extends Application
         
         add.setOnAction(new AddHandler());
         accept.setOnAction(new AcceptHandler());
+        cbSong.setOnAction(new CBSongHandler()); // to display when toggle bw song titles
         
         
         //3) Register an Event Handler, so handler can be notified
@@ -238,6 +248,9 @@ public class SongDatabase extends Application
             // Write to file
             writeToFile(); 
             
+            // Add to treemap
+            putToTreeMap();
+            
             // Enable
             cbSong.setDisable(false);
             add.setDisable(false);
@@ -258,18 +271,20 @@ public class SongDatabase extends Application
 
     public void writeToFile()
     {
-        String songInfo = null;
         
         String fileName = "tester.txt"; 
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
         {   
             // Pull user input data
             songInfo = cbSong.getValue();
-            String itemCodeInfo = itemCodeField.getText(); 
-            String descriptionInfo = descriptionField.getText();
-            String artistInfo = artistField.getText();
-            String albumInfo = albumField.getText();
-            String priceInfo = priceField.getText();
+            itemCodeInfo = itemCodeField.getText(); 
+            descriptionInfo = descriptionField.getText();
+            artistInfo = artistField.getText();
+            albumInfo = albumField.getText();
+            priceInfo = priceField.getText();
+
+            System.out.println("This is the map size: " + playlistMap.size() );
+            
             
             // write
             bw.write(songInfo + ";" + itemCodeInfo + ";" +
@@ -282,30 +297,58 @@ public class SongDatabase extends Application
             ioe.printStackTrace();
         } 
         // Add new song title to ComboBox
+        cbSong.getItems().remove("No Songs selected"); 
         cbSong.getItems().addAll(songInfo); 
-        System.out.println("File created and written. Success");     
+        System.out.println("File created and written. Success");   
     }
     
-    static void writePlaylist(String fileName) 
+    public void putToTreeMap()
     {
+        Playlist playlist = new Playlist(songInfo,  itemCodeInfo, 
+                descriptionInfo, artistInfo,  
+                albumInfo, priceInfo);
+        
+        playlistMap.put(cbSong.getValue(), playlist);
        
+        // Prints out what's in the map currently.
+//        for (Map.Entry p: playlistMap.entrySet())
+//            System.out.println(p.getKey() + " : " +
+//                    p.getValue());
+        
+        
+        System.out.println("playlistMap size: " + playlistMap.size()); 
     }
-      
+    
+    class CBSongHandler implements EventHandler<ActionEvent>
+    {
+        @Override
+        public void handle(ActionEvent event)
+        { 
+//            songInfo = cbSong.getValue(); 
+            getFromTreeMap();
+        }
+    }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    public void getFromTreeMap()
+    {
+        // Split up the key where user toggled to in ComboBox
+        // Assign them to TextField Value and comboBox values
+
+        
+        
+        String value = 
+            (String) cbSong.getSelectionModel().getSelectedItem().toString(); //getValue(); 
+        
+        String[] column = value.split(";");
+        cbSong.setValue(column[0].trim());  // cbSong.setValue(cbSong.getValue()); 
+        itemCodeField.setText(column[1]);//.trim()); 
+        descriptionField.setText(column[2]);//.trim());
+        artistField.setText(column[3]);//.trim());
+        albumField.setText(column[4]);//.trim());
+        priceField.setText(column[4]); //.trim());
+    }
+  
     public static void main(String[] args)
     {
         launch(args); 
