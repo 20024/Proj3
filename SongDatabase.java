@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-//import java.util.Map.Entry;
 import java.util.TreeMap;
 import javafx.application.*;
 import javafx.beans.value.ObservableValue;
@@ -50,7 +49,7 @@ public class SongDatabase extends Application
     String descriptionInfo = null; 
     String artistInfo = null;
     String albumInfo = null; 
-    String priceInfo = null; 
+    double priceInfo = 0.0; 
     
     Playlist newVal;
     Playlist playlist;
@@ -116,7 +115,6 @@ public class SongDatabase extends Application
         
         cbSong.setEditable(true); 
   
-        
         // Initial State (empty)
         edit.setDisable(true);
         delete.setDisable(true);
@@ -128,8 +126,7 @@ public class SongDatabase extends Application
         artistField.setDisable(true);
         albumField.setDisable(true); // if N/A, assign "NONE" 
         priceField.setDisable(true);
-        
-        
+    
         add.setOnAction(new AddHandler());
         accept.setOnAction(new AcceptHandler());
         delete.setOnAction(new DeleteHandler());
@@ -376,23 +373,28 @@ public class SongDatabase extends Application
             if(editClicked)
             {
                 playlistMap.remove(itemCodeField.getText()); // might move to EditHandler()
-                
-                // Pull user input data
-                songInfo = cbSong.getValue();
-                itemCodeInfo = itemCodeField.getText(); 
-                descriptionInfo = descriptionField.getText();
-                artistInfo = artistField.getText();
-                albumInfo = albumField.getText();
-                priceInfo = priceField.getText();
-                
-                playlist = new Playlist(songInfo,  itemCodeInfo, 
-                        descriptionInfo, artistInfo, albumInfo, priceInfo);
-                
-                
-                playlistMap.put(cbSong.getValue(), playlist);
-                
-                // More like write everything from map to file again
-                removeFromFile(); 
+                try 
+                {
+                    // Pull user input data
+                    songInfo = cbSong.getValue();
+                    itemCodeInfo = itemCodeField.getText(); 
+                    descriptionInfo = descriptionField.getText();
+                    artistInfo = artistField.getText();
+                    albumInfo = albumField.getText();
+                    priceInfo = Double.parseDouble(priceField.getText()); // double to string
+                    
+                    playlist = new Playlist(songInfo,  itemCodeInfo, 
+                            descriptionInfo, artistInfo, albumInfo, priceInfo);
+                    
+                    playlistMap.put(cbSong.getValue(), playlist);
+                    
+                    // More like write everything from map to file again
+                    removeFromFile(); 
+                }
+                catch(IllegalArgumentException iae)
+                {
+                    System.out.println("Price needs to be a double! ");
+                }
                 
                 // Enable
                 cbSong.setDisable(false); 
@@ -426,7 +428,7 @@ public class SongDatabase extends Application
             descriptionInfo = descriptionField.getText();
             artistInfo = artistField.getText();
             albumInfo = albumField.getText();
-            priceInfo = priceField.getText();
+            priceInfo = Double.parseDouble(priceField.getText());
 
             System.out.println("This is the map size: " + playlistMap.size() );
             
@@ -436,6 +438,10 @@ public class SongDatabase extends Application
                    albumInfo + ";" + priceInfo); 
             bw.newLine();    
         }
+        catch(IllegalArgumentException iae)
+        {
+            System.out.println("Price needs to be a double! ");
+        }
         catch(IOException ioe) 
         {
             ioe.printStackTrace();
@@ -444,8 +450,6 @@ public class SongDatabase extends Application
         cbSong.getItems().addAll(songInfo); 
         System.out.println("File created and written. Success");   
     }
-    
-    
     
     public void defaultButtonDisplay()
     {
@@ -486,25 +490,18 @@ public class SongDatabase extends Application
         playlist = new Playlist(songInfo,  itemCodeInfo, 
                 descriptionInfo, artistInfo, albumInfo, priceInfo);
         
-        
         playlistMap.put(cbSong.getValue(), playlist);
-//        playlistMap.put(itemCodeField.getText(), playlist);
         cbSong.getItems().remove("No Songs Selected");
       
         System.out.println("playlistMap size: " + playlistMap.size()); 
     }
     
-    
-
-    
     public void removeFromTreeMap()
     {
         playlistMap.remove(cbSong.getValue());
-//        playlistMap.remove(itemCodeField.getText());
         cbSong.getItems().remove("No Songs Selected"); 
         cbSong.getItems().remove(cbSong.getValue());
     }
-    
     
     public void removeFromFile()
     { // After removing from the map, we will write the new map to the file. 
@@ -522,23 +519,16 @@ public class SongDatabase extends Application
                 bw.write("" +  p.getValue() );// our map's value has same content as line in the text file
                 bw.newLine();
                 bw.flush(); 
-//                cbSong.getItems(); // add each item to combo box 
             }            
         }
         catch(IOException ioe) 
         {
             ioe.printStackTrace();
         } 
-//        // Add new song title to ComboBox
-
-//        cbSong.getItems().addAll(songInfo); 
-//        System.out.println("File created and written. Success");  
-        
     }
     
     public static void main(String[] args)
     {
         launch(args); 
     }
-
 }

@@ -6,7 +6,7 @@ public class Playlist
     private String description; 
     private String artist; 
     private String album;
-    private String price; 
+    private double price; 
 
     // Default constructor
     public Playlist() {}
@@ -14,7 +14,7 @@ public class Playlist
     // Constructor
     public Playlist(String song, String itemCode, 
             String description, String artist, 
-            String album, String priceInfo)
+            String album, double priceInfo)
     {
         super();
         this.song = song;
@@ -75,12 +75,12 @@ public class Playlist
         this.album = album;
     }
 
-    public String getPrice()
+    public double getPrice()
     {
         return price;
     }
 
-    public void setPrice(String price)
+    public void setPrice(double price)
     {
         this.price = price;
     }
