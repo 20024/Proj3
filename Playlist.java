@@ -92,10 +92,4 @@ public class Playlist
                 + artist + ";" + album + ";" + price;
     }
 
-    public Playlist[] split(String string)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-      
 }

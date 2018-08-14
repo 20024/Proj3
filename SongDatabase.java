@@ -7,10 +7,9 @@ import javafx.stage.Stage;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 import java.util.TreeMap;
-
 import javafx.application.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +18,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
+import javafx.beans.value.ChangeListener;
+
 
 
 
@@ -56,6 +57,8 @@ public class SongDatabase extends Application
     String artistInfo = null;
     String albumInfo = null; 
     String priceInfo = null; 
+    
+    Playlist newVal;
     
     
     private boolean addClicked = true; 
@@ -113,27 +116,8 @@ public class SongDatabase extends Application
         // Set the default value
         cbSong.setValue("No Songs selected");
         
-//        // Set the response label to indicate the default selection
-//        response.setText("Selected Transport is " + 
-//                cbSong.getValue());
-        
-//        /**
-//         * allow user to edit selection
-//         */
-        cbSong.setEditable(true); // use for the "edit"? of prj3
-//        
-//        // Listen for action events on the combo box
-//        cbSong.setOnAction(
-//            new EventHandler<ActionEvent>()
-//            {
-//                public void handle(ActionEvent ae) 
-//                {
-//                    cbSong.getSelectionModel().getSelectedItem(); 
-//                }
-//            }
-//        );
-//        
-        
+        cbSong.setEditable(true); 
+  
         
         // Initial State (empty)
         edit.setDisable(true);
@@ -150,10 +134,32 @@ public class SongDatabase extends Application
         
         add.setOnAction(new AddHandler());
         accept.setOnAction(new AcceptHandler());
-        cbSong.setOnAction(new CBSongHandler()); // to display when toggle bw song titles
-        
-        
 
+        /**
+         * This Change Listener fills up the song's properties
+         * when user select the song from the combo box. 
+         * 
+         * Note, <String>, not <Playlist>!!!
+         */
+        cbSong.valueProperty().addListener( new ChangeListener <String>() 
+        {
+              public void changed(ObservableValue <? extends String> 
+              changed, String oldVal, String newVal) 
+              {
+                  Playlist selectedSong = playlistMap.get(newVal);
+
+                  String[] column = (String[]) selectedSong.toString().split(";");
+                 
+                  cbSong.setValue(column[0]); 
+                  itemCodeField.setText(column[1]);
+                  descriptionField.setText(column[2]);
+                  artistField.setText(column[3]); 
+                  albumField.setText(column[4]);
+                 priceField.setText(column[5]); 
+              }
+        });
+  
+        
         // Arrange node in grid
         rootNode.add(song, 0,0);
         rootNode.add(cbSong, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
@@ -287,45 +293,13 @@ public class SongDatabase extends Application
     public void putToTreeMap()
     {
         Playlist playlist = new Playlist(songInfo,  itemCodeInfo, 
-                descriptionInfo, artistInfo,  
-                albumInfo, priceInfo);
+                descriptionInfo, artistInfo, albumInfo, priceInfo);
         
         playlistMap.put(cbSong.getValue(), playlist);
-       
-        // Prints out what's in the map currently.
-//        for (Map.Entry p: playlistMap.entrySet())
-//            System.out.println(p.getKey() + " : " +
-//                    p.getValue());
-        
-        
+      
         System.out.println("playlistMap size: " + playlistMap.size()); 
     }
     
-    class CBSongHandler implements EventHandler<ActionEvent>
-    {
-        @Override
-        public void handle(ActionEvent event)
-        { 
-//            songInfo = cbSong.getValue(); 
-            getFromTreeMap();
-        }
-    }
-    
-    
-    public void getFromTreeMap()
-    {
-        // Split up the key where user toggled to in ComboBox
-        // Assign them to TextField Value and comboBox values 
-        for (Map.Entry<String, Playlist> p: playlistMap.entrySet())//contactMap.entrySet())
-        //for(Contact c: contactMap.values())
-        {
-            System.out.println(p.getKey() + " : " +  // to print in console
-                    p.getValue() );
-            
-            // split up the getValue() --- then assign to gui display ; 
-        }      
-    }
-  
     public static void main(String[] args)
     {
         launch(args); 
