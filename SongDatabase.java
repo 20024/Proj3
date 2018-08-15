@@ -572,7 +572,6 @@ public class SongDatabase extends Application
             while((line = br.readLine()) != null)
             {           
                 System.out.println(line);  
-//                playlistMap.put( , line); // writing to map 
                 String[] column = line.split(";");
                 String song = column[0].trim(); 
                 String itemCode = column[1].trim(); 
@@ -585,12 +584,33 @@ public class SongDatabase extends Application
                         description, artist,  
                         album, Double.parseDouble(price));
                 
-                playlistMap.put(song, playlist);       
+                playlistMap.put(song, playlist);   
+                
+                cbSong.getItems().add(song); 
             }
+            cbSong.getItems().remove("No Songs Selected");
             
-            for (Map.Entry p: playlistMap.entrySet())
-                System.out.println(p.getKey() + " : " +
-                        p.getValue());
+            cbSong.valueProperty().addListener( new ChangeListener <String>() 
+            {
+                  public void changed(ObservableValue <? extends String> 
+                  changed, String oldVal, String newVal) 
+                  {
+                      Playlist selectedSong = playlistMap.get(newVal);
+
+                      String[] column = (String[]) selectedSong.toString().split(";");
+                     
+                      cbSong.setValue(column[0]); 
+                      itemCodeField.setText(column[1]);
+                      descriptionField.setText(column[2]);
+                      artistField.setText(column[3]); 
+                      albumField.setText(column[4]);
+                      priceField.setText(column[5]); 
+                  }
+            });
+
+//            for (Map.Entry p: playlistMap.entrySet())
+//                System.out.println(p.getKey() + " : " +
+//                        p.getValue());
         }
         catch(IOException e)
         {
