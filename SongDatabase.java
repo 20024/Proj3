@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -62,6 +63,7 @@ public class SongDatabase extends Application
     private boolean addClicked; 
     private boolean deleteClicked; 
     private boolean editClicked; 
+    private boolean fileExists;
     Stage myStage; 
     static String fileName; 
     
@@ -69,6 +71,7 @@ public class SongDatabase extends Application
     
     TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
 
+    
     public void start(Stage myStage)
     {
         myStage.setTitle("Song Database");
@@ -118,28 +121,47 @@ public class SongDatabase extends Application
         // Create combo box.
         cbSong = new ComboBox<String> (songField);
         
-        // Set the default value
-        cbSong.setValue("No Songs Selected");
         
-        cbSong.setEditable(true); 
-  
-        // Initial State (empty)
-        edit.setDisable(true);
-        delete.setDisable(true);
-        accept.setDisable(true);
-        cancel.setDisable(true);
-        
-        itemCodeField.setDisable(true);
-        descriptionField.setDisable(true);
-        artistField.setDisable(true);
-        albumField.setDisable(true); // if N/A, assign "NONE" 
-        priceField.setDisable(true);
-    
-        
-        // Need to prefill combo box with previous data-- write txt to TreeMap
-        // where key = cbSong,
-//        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
-        getPlaylist();
+        getPlaylist(); 
+     
+        if (playlistMap.size() != 0 )
+        {           
+            // Enable
+            cbSong.setDisable(false); 
+            add.setDisable(false);
+            edit.setDisable(false);
+            delete.setDisable(false);
+            exit.setDisable(false);
+            
+            // Disable
+            itemCodeField.setDisable(true);
+            descriptionField.setDisable(true);
+            artistField.setDisable(true);
+            albumField.setDisable(true);
+            priceField.setDisable(true);
+            accept.setDisable(true);
+            cancel.setDisable(true);   
+        }
+        else 
+        {
+            // Set the default value
+            cbSong.setValue("No Songs Selected");
+
+            cbSong.setEditable(true); 
+      
+            // Initial State (empty)
+            edit.setDisable(true);
+            delete.setDisable(true);
+            accept.setDisable(true);
+            cancel.setDisable(true);
+            
+            itemCodeField.setDisable(true);
+            descriptionField.setDisable(true);
+            artistField.setDisable(true);
+            albumField.setDisable(true); // if N/A, assign "NONE" 
+            priceField.setDisable(true);
+        }
+
 
         
         add.setOnAction(new AddHandler());
@@ -164,7 +186,7 @@ public class SongDatabase extends Application
                 Playlist selectedSong = playlistMap.get(newVal);
 
                 String[] column = 
-                  (String[]) selectedSong.toString().split(";");
+                    selectedSong.toString().split(";");
              
                 cbSong.setValue(column[0]); 
                 itemCodeField.setText(column[1]);
@@ -180,7 +202,7 @@ public class SongDatabase extends Application
         rootNode.add(cbSong, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
         
         rootNode.add(itemCode, 0, 1); // col1, row1 
-        rootNode.add(itemCodeField, 1, 1, 4, 1); // col2, row1 //<===== MAKE SMALLER!! 
+        rootNode.add(itemCodeField, 1, 1, 2, 1); // col2, row1 //<===== MAKE SMALLER!! 
         
         rootNode.add(description,  0, 2);
         rootNode.add(descriptionField, 1, 2, 4, 1);
@@ -214,6 +236,7 @@ public class SongDatabase extends Application
             
             if(addClicked)
             {
+                cbSong.setEditable(true);
                 // Clear field
                 // Disable
                 cbSong.setValue("");
@@ -282,7 +305,6 @@ public class SongDatabase extends Application
         @Override
         public void handle(ActionEvent event)
         { 
-            deleteClicked = true;
             if(deleteClicked)
             {
                 // Enable
@@ -392,25 +414,30 @@ public class SongDatabase extends Application
             }
             if(editClicked)
             {
-                playlistMap.remove(itemCodeField.getText()); // might move to EditHandler()
+                // .remove(songInfo)
+                playlistMap.remove(cbSong.getValue()); // (songgetText()); // might move to EditHandler()
                 try 
                 {
-//                    // Pull user input data
-//                    songInfo = cbSong.getValue();
-//                    itemCodeInfo = itemCodeField.getText(); 
-//                    descriptionInfo = descriptionField.getText();
-//                    artistInfo = artistField.getText();
-//                    albumInfo = albumField.getText();
-//                    priceInfo = Double.parseDouble(priceField.getText()); // double to string
+                    // Pull user input data
+                    songInfo = cbSong.getValue();
+                    itemCodeInfo = itemCodeField.getText(); 
+                    descriptionInfo = descriptionField.getText();
+                    artistInfo = artistField.getText();
+                    albumInfo = albumField.getText();
+                    priceInfo = Double.parseDouble(priceField.getText()); // double to string
                     
-                    playlist = new Playlist(cbSong.getValue(),  
-                            itemCodeField.getText(), 
-                            descriptionField.getText(), 
-                            artistField.getText(), 
-                            albumField.getText(),
-                            Double.parseDouble(priceField.getText()) );
+                    playlist = new Playlist(songInfo,  itemCodeInfo, 
+                            descriptionInfo, artistInfo, albumInfo, priceInfo);
+//                    
+//                    playlist = new Playlist(cbSong.getValue(),  
+//                            itemCodeField.getText(), 
+//                            descriptionField.getText(), 
+//                            artistField.getText(), 
+//                            albumField.getText(),
+//                            Double.parseDouble(priceField.getText()) );
                     
-                    playlistMap.put(cbSong.getValue(), playlist);
+                    playlistMap.put(songInfo, playlist);
+//                    playlistMap.put(cbSong.getValue(), playlist);
                     
                     // More like write everything from map to file again
                     removeFromFile(); 
@@ -447,24 +474,24 @@ public class SongDatabase extends Application
         try(BufferedWriter bw = new BufferedWriter(
                 new FileWriter(fileName, true)))
         {   
-//            // Pull user input data
-//            songInfo = cbSong.getValue();
-//            itemCodeInfo = itemCodeField.getText(); 
-//            descriptionInfo = descriptionField.getText();
-//            artistInfo = artistField.getText();
-//            albumInfo = albumField.getText();
-//            priceInfo = Double.parseDouble(priceField.getText());
-//
-//            System.out.println("This is the map size: " + playlistMap.size() );
-//            
-//            // write
-//            bw.write(songInfo + ";" + itemCodeInfo + ";" +
-//                   descriptionInfo + ";" + artistInfo + ";" + 
-//                   albumInfo + ";" + priceInfo); 
+            // Pull user input data
+            songInfo = cbSong.getValue();
+            itemCodeInfo = itemCodeField.getText(); 
+            descriptionInfo = descriptionField.getText();
+            artistInfo = artistField.getText();
+            albumInfo = albumField.getText();
+            priceInfo = Double.parseDouble(priceField.getText());
+
+            System.out.println("This is the map size: " + playlistMap.size() );
             
-            bw.write(cbSong.getValue() + ";" + itemCodeField.getText() + ";" +
-                    descriptionField.getText() + ";" + artistField.getText() + ";" + 
-                    albumField.getText() + ";" + Double.parseDouble(priceField.getText())); 
+            // write
+            bw.write(songInfo + ";" + itemCodeInfo + ";" +
+                   descriptionInfo + ";" + artistInfo + ";" + 
+                   albumInfo + ";" + priceInfo); 
+            
+//            bw.write(cbSong.getValue() + ";" + itemCodeField.getText() + ";" +
+//                    descriptionField.getText() + ";" + artistField.getText() + ";" + 
+//                    albumField.getText() + ";" + Double.parseDouble(priceField.getText())); 
             bw.newLine();    
         }
         catch(IllegalArgumentException iae)
@@ -518,13 +545,14 @@ public class SongDatabase extends Application
      */
     public void putToTreeMap()
     {
-//        playlist = new Playlist(songInfo,  itemCodeInfo, 
-//                descriptionInfo, artistInfo, albumInfo, priceInfo);
-        playlist = new Playlist(cbSong.getValue(),  itemCodeField.getText(), 
-                descriptionField.getText() , artistField.getText(), 
-                albumField.getText(), Double.parseDouble(priceField.getText()));
+        playlist = new Playlist(songInfo,  itemCodeInfo, 
+                descriptionInfo, artistInfo, albumInfo, priceInfo);
+//        playlist = new Playlist(cbSong.getValue(),  itemCodeField.getText(), 
+//                descriptionField.getText() , artistField.getText(), 
+//                albumField.getText(), Double.parseDouble(priceField.getText()));
         
-        playlistMap.put(cbSong.getValue(), playlist);
+//        playlistMap.put(cbSong.getValue(), playlist);
+        playlistMap.put(songInfo, playlist); 
         cbSong.getItems().remove("No Songs Selected");
       
         System.out.println("playlistMap size: " + playlistMap.size()); 
@@ -563,6 +591,7 @@ public class SongDatabase extends Application
     
     public static void main(String[] args)
     {
+        
         launch(args); 
     }
     
@@ -584,7 +613,7 @@ public class SongDatabase extends Application
         String line = null; 
        
         
-        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
+//        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
     
         try(BufferedReader br = 
             new BufferedReader(new FileReader(fileName)))
@@ -610,14 +639,18 @@ public class SongDatabase extends Application
             }
             cbSong.getItems().remove("No Songs Selected");
             
+            System.out.println("This is the map size: " + playlistMap.size() );
+            
+            // Read in all that's in text file 
+            // and add it to map 
             cbSong.valueProperty().addListener( new ChangeListener <String>() 
             {
                   public void changed(ObservableValue <? extends String> 
                   changed, String oldVal, String newVal) 
                   {
-                      Playlist selectedSong = playlistMap.get(newVal);
+                      Playlist playlist = playlistMap.get(newVal);
 
-                      String[] column = (String[]) selectedSong.toString().split(";");
+                      String[] column = (String[]) playlist.toString().split(";");
                      
                       cbSong.setValue(column[0]); 
                       itemCodeField.setText(column[1]);
@@ -631,6 +664,7 @@ public class SongDatabase extends Application
         }
         catch(IOException e)
         {
+            
             System.out.println("File does not exist");
             System.out.println("Would you like to create a new file? (Y/N)");
             String choice = scanner.next(); 
@@ -642,7 +676,7 @@ public class SongDatabase extends Application
             }
             else
             {
-                System.out.println("This is when we exit()");
+                System.exit(0);
             } 
         } 
     }
