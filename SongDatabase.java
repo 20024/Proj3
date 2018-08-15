@@ -121,45 +121,18 @@ public class SongDatabase extends Application
         // Create combo box.
         cbSong = new ComboBox<String> (songField);
         
-        
+        /**
+         * Calling this opening of text file.
+         */
         getPlaylist(); 
      
-        if (playlistMap.size() != 0 )
-        {           
-            // Enable
-            cbSong.setDisable(false); 
-            add.setDisable(false);
-            edit.setDisable(false);
-            delete.setDisable(false);
-            exit.setDisable(false);
-            
-            // Disable
-            itemCodeField.setDisable(true);
-            descriptionField.setDisable(true);
-            artistField.setDisable(true);
-            albumField.setDisable(true);
-            priceField.setDisable(true);
-            accept.setDisable(true);
-            cancel.setDisable(true);   
-        }
-        else 
+        if (playlistMap.size() != 0 ) // If file is not 
         {
-            // Set the default value
-            cbSong.setValue("No Songs Selected");
-
-            cbSong.setEditable(true); 
-      
-            // Initial State (empty)
-            edit.setDisable(true);
-            delete.setDisable(true);
-            accept.setDisable(true);
-            cancel.setDisable(true);
-            
-            itemCodeField.setDisable(true);
-            descriptionField.setDisable(true);
-            artistField.setDisable(true);
-            albumField.setDisable(true); // if N/A, assign "NONE" 
-            priceField.setDisable(true);
+            nonemptyFileDisplay();
+        }
+        else // If file is empty
+        {
+            emptyFileDisplay();
         }
 
 
@@ -534,6 +507,46 @@ public class SongDatabase extends Application
         priceField.setDisable(true);
         accept.setDisable(true);
         cancel.setDisable(true);  
+    }
+    
+    
+    public void nonemptyFileDisplay()
+    {
+        // Enable
+        cbSong.setDisable(false); 
+        add.setDisable(false);
+        edit.setDisable(false);
+        delete.setDisable(false);
+        exit.setDisable(false);
+        
+        // Disable
+        itemCodeField.setDisable(true);
+        descriptionField.setDisable(true);
+        artistField.setDisable(true);
+        albumField.setDisable(true);
+        priceField.setDisable(true);
+        accept.setDisable(true);
+        cancel.setDisable(true);  
+    }
+    
+    public void emptyFileDisplay()
+    {
+        // Set the default value
+        cbSong.setValue("No Songs Selected");
+
+        cbSong.setEditable(true); 
+  
+        // Initial State (empty)
+        edit.setDisable(true);
+        delete.setDisable(true);
+        accept.setDisable(true);
+        cancel.setDisable(true);
+        
+        itemCodeField.setDisable(true);
+        descriptionField.setDisable(true);
+        artistField.setDisable(true);
+        albumField.setDisable(true); // if N/A, assign "NONE" 
+        priceField.setDisable(true);
     }
     
     /**
