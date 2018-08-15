@@ -158,20 +158,21 @@ public class SongDatabase extends Application
          */
         cbSong.valueProperty().addListener( new ChangeListener <String>() 
         {
-              public void changed(ObservableValue <? extends String> 
-              changed, String oldVal, String newVal) 
-              {
-                  Playlist selectedSong = playlistMap.get(newVal);
+            public void changed(ObservableValue <? extends String> 
+            changed, String oldVal, String newVal) 
+            {
+                Playlist selectedSong = playlistMap.get(newVal);
 
-                  String[] column = (String[]) selectedSong.toString().split(";");
-                 
-                  cbSong.setValue(column[0]); 
-                  itemCodeField.setText(column[1]);
-                  descriptionField.setText(column[2]);
-                  artistField.setText(column[3]); 
-                  albumField.setText(column[4]);
-                  priceField.setText(column[5]); 
-              }
+                String[] column = 
+                  (String[]) selectedSong.toString().split(";");
+             
+                cbSong.setValue(column[0]); 
+                itemCodeField.setText(column[1]);
+                descriptionField.setText(column[2]);
+                artistField.setText(column[3]); 
+                albumField.setText(column[4]);
+                priceField.setText(column[5]); 
+          }
         });
         
         // Arrange node in grid
@@ -402,8 +403,11 @@ public class SongDatabase extends Application
 //                    albumInfo = albumField.getText();
 //                    priceInfo = Double.parseDouble(priceField.getText()); // double to string
                     
-                    playlist = new Playlist(cbSong.getValue(),  itemCodeField.getText(), 
-                            descriptionField.getText(), artistField.getText(), albumField.getText(),
+                    playlist = new Playlist(cbSong.getValue(),  
+                            itemCodeField.getText(), 
+                            descriptionField.getText(), 
+                            artistField.getText(), 
+                            albumField.getText(),
                             Double.parseDouble(priceField.getText()) );
                     
                     playlistMap.put(cbSong.getValue(), playlist);
@@ -440,22 +444,27 @@ public class SongDatabase extends Application
     public void writeToFile()
     {  
 //        String fileName = "tester.txt"; 
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
+        try(BufferedWriter bw = new BufferedWriter(
+                new FileWriter(fileName, true)))
         {   
-            // Pull user input data
-            songInfo = cbSong.getValue();
-            itemCodeInfo = itemCodeField.getText(); 
-            descriptionInfo = descriptionField.getText();
-            artistInfo = artistField.getText();
-            albumInfo = albumField.getText();
-            priceInfo = Double.parseDouble(priceField.getText());
-
-            System.out.println("This is the map size: " + playlistMap.size() );
+//            // Pull user input data
+//            songInfo = cbSong.getValue();
+//            itemCodeInfo = itemCodeField.getText(); 
+//            descriptionInfo = descriptionField.getText();
+//            artistInfo = artistField.getText();
+//            albumInfo = albumField.getText();
+//            priceInfo = Double.parseDouble(priceField.getText());
+//
+//            System.out.println("This is the map size: " + playlistMap.size() );
+//            
+//            // write
+//            bw.write(songInfo + ";" + itemCodeInfo + ";" +
+//                   descriptionInfo + ";" + artistInfo + ";" + 
+//                   albumInfo + ";" + priceInfo); 
             
-            // write
-            bw.write(songInfo + ";" + itemCodeInfo + ";" +
-                   descriptionInfo + ";" + artistInfo + ";" + 
-                   albumInfo + ";" + priceInfo); 
+            bw.write(cbSong.getValue() + ";" + itemCodeField.getText() + ";" +
+                    descriptionField.getText() + ";" + artistField.getText() + ";" + 
+                    albumField.getText() + ";" + Double.parseDouble(priceField.getText())); 
             bw.newLine();    
         }
         catch(IllegalArgumentException iae)
@@ -467,7 +476,9 @@ public class SongDatabase extends Application
             ioe.printStackTrace();
         } 
         // Add new song title to ComboBox
-        cbSong.getItems().addAll(songInfo); 
+//        cbSong.getItems().addAll(songInfo); 
+        cbSong.getItems().addAll(cbSong.getValue()); 
+
         System.out.println("File created and written. Success");   
     }
     
@@ -507,8 +518,11 @@ public class SongDatabase extends Application
      */
     public void putToTreeMap()
     {
-        playlist = new Playlist(songInfo,  itemCodeInfo, 
-                descriptionInfo, artistInfo, albumInfo, priceInfo);
+//        playlist = new Playlist(songInfo,  itemCodeInfo, 
+//                descriptionInfo, artistInfo, albumInfo, priceInfo);
+        playlist = new Playlist(cbSong.getValue(),  itemCodeField.getText(), 
+                descriptionField.getText() , artistField.getText(), 
+                albumField.getText(), Double.parseDouble(priceField.getText()));
         
         playlistMap.put(cbSong.getValue(), playlist);
         cbSong.getItems().remove("No Songs Selected");
@@ -536,7 +550,7 @@ public class SongDatabase extends Application
 
             for(Map.Entry<String, Playlist> p: playlistMap.entrySet())
             {
-                bw.write("" +  p.getValue() );// our map's value has same content as line in the text file
+                bw.write("" +  p.getValue() ); // our map's value has same content as line in the text file
                 bw.newLine();
                 bw.flush(); 
             }            
@@ -581,7 +595,6 @@ public class SongDatabase extends Application
                 String[] column         = line.split(";");
                 songInfo         = column[0].trim(); 
                 itemCodeInfo     = column[1].trim(); 
-                
                 descriptionInfo  = column[2].trim();
                 artistInfo       = column[3].trim();
                 albumInfo        = column[4].trim();
@@ -626,7 +639,6 @@ public class SongDatabase extends Application
                 System.out.println("What is the name of this new playlist (.txt)? ");
                 String newFileName = scanner.next(); 
                 fileName = newFileName; 
-//                writePlaylist(fileName); 
             }
             else
             {
@@ -634,18 +646,7 @@ public class SongDatabase extends Application
             } 
         } 
     }
-//    static void writePlaylist(String fileName) 
-//    {
-//        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
-//        {   
-//            bw.newLine(); 
-//        }
-//        catch(IOException ioe) 
-//        {
-//            ioe.printStackTrace();
-//        } 
-//        System.out.println("File created and empty. Success");  
-//    }
+
     
     
     
