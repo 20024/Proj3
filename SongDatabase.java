@@ -59,10 +59,11 @@ public class SongDatabase extends Application
     Playlist newVal;
     Playlist playlist;
     
-    private boolean addClicked = true; 
+    private boolean addClicked; 
     private boolean deleteClicked; 
     private boolean editClicked; 
     Stage myStage; 
+    private static String fileName; 
     
     Scanner scanner = new Scanner(System.in); 
     
@@ -209,6 +210,7 @@ public class SongDatabase extends Application
         public void handle(ActionEvent event)
         {
             addClicked = true;
+            
             if(addClicked)
             {
                 // Clear field
@@ -308,14 +310,17 @@ public class SongDatabase extends Application
         {   
             if(addClicked)
             {
+                addClicked = false; 
                 defaultButtonDisplay(); 
             }
             if(editClicked)
             {
+                editClicked = false;
                 defaultButtonDisplay();
             }
             if(deleteClicked)
             {
+                deleteClicked = false; 
                 defaultButtonDisplay();
             }
         }
@@ -330,7 +335,7 @@ public class SongDatabase extends Application
             if(addClicked)
             {
                 // Write to file
-                writeToFile();   // <======== do we put to map first?? 
+                writeToFile(fileName);   // <======== do we put to map first?? 
                 // Add to treemap
                 putToTreeMap();
                 
@@ -360,7 +365,7 @@ public class SongDatabase extends Application
             if(deleteClicked)
             {
                 removeFromTreeMap(); 
-                removeFromFile(); 
+                removeFromFile(fileName); 
                 
                 // Disable editing in combo box
                 cbSong.setEditable(true);
@@ -389,21 +394,22 @@ public class SongDatabase extends Application
                 playlistMap.remove(itemCodeField.getText()); // might move to EditHandler()
                 try 
                 {
-                    // Pull user input data
-                    songInfo = cbSong.getValue();
-                    itemCodeInfo = itemCodeField.getText(); 
-                    descriptionInfo = descriptionField.getText();
-                    artistInfo = artistField.getText();
-                    albumInfo = albumField.getText();
-                    priceInfo = Double.parseDouble(priceField.getText()); // double to string
+//                    // Pull user input data
+//                    songInfo = cbSong.getValue();
+//                    itemCodeInfo = itemCodeField.getText(); 
+//                    descriptionInfo = descriptionField.getText();
+//                    artistInfo = artistField.getText();
+//                    albumInfo = albumField.getText();
+//                    priceInfo = Double.parseDouble(priceField.getText()); // double to string
                     
-                    playlist = new Playlist(songInfo,  itemCodeInfo, 
-                            descriptionInfo, artistInfo, albumInfo, priceInfo);
+                    playlist = new Playlist(cbSong.getValue(),  itemCodeField.getText(), 
+                            descriptionField.getText(), artistField.getText(), albumField.getText(),
+                            Double.parseDouble(priceField.getText()) );
                     
                     playlistMap.put(cbSong.getValue(), playlist);
                     
                     // More like write everything from map to file again
-                    removeFromFile(); 
+                    removeFromFile(fileName); 
                 }
                 catch(IllegalArgumentException iae)
                 {
@@ -431,9 +437,9 @@ public class SongDatabase extends Application
         }
     }
 
-    public void writeToFile()
+    public void writeToFile(String fileName)
     {  
-        String fileName = "tester.txt"; 
+//        String fileName;// = "tester.txt"; 
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
         {   
             // Pull user input data
@@ -517,10 +523,10 @@ public class SongDatabase extends Application
         cbSong.getItems().remove(cbSong.getValue());
     }
     
-    public void removeFromFile()
+    public void removeFromFile(String fileName)
     { // After removing from the map, we will write the new map to the file. 
         
-        String fileName = "tester.txt"; 
+//        String fileName;// = "tester.txt"; 
         // note, no "true" so we can overwrite the whole file!!!
         try(BufferedWriter bw = new BufferedWriter(
                 new FileWriter(fileName))) 
@@ -557,7 +563,7 @@ public class SongDatabase extends Application
     
     
     
-    public void getPlaylist()
+    public String getPlaylist()
     {
         System.out.println("Please input the file name, including .txt");
         String fileName = scanner.next(); 
@@ -608,9 +614,6 @@ public class SongDatabase extends Application
                   }
             });
 
-//            for (Map.Entry p: playlistMap.entrySet())
-//                System.out.println(p.getKey() + " : " +
-//                        p.getValue());
         }
         catch(IOException e)
         {
@@ -628,6 +631,7 @@ public class SongDatabase extends Application
                 System.out.println("This is when we exit()");
             } 
         } 
+        return fileName; 
     }
     
     

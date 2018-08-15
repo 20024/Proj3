@@ -14,7 +14,7 @@ public class Playlist
     // Constructor
     public Playlist(String song, String itemCode, 
             String description, String artist, 
-            String album, double priceInfo)
+            String album, double price)
     {
         super();
         this.song = song;
@@ -22,7 +22,7 @@ public class Playlist
         this.description = description;
         this.artist = artist;
         this.album = album;
-        this.price = priceInfo;
+        this.price = price;
     }
 
     public String getSong()
