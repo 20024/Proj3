@@ -1,8 +1,6 @@
 import javafx.scene.control.*;
 import java.util.Scanner;
-
 import javafx.stage.Stage;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -22,6 +20,15 @@ import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.beans.value.ChangeListener;
 
+
+/**
+ * 
+ * 
+ * 
+ * @author LynHNguyen
+ *
+ */
+
 public class SongDatabase extends Application
 {
     // Initialize Buttons for user selection 
@@ -33,7 +40,7 @@ public class SongDatabase extends Application
     private Button exit; 
     
     // Initialize Labels & Textfields for user insert
-    private Label song; 
+    private Label name; 
     private Label itemCode;
     private Label description; 
     private Label artist; 
@@ -42,23 +49,23 @@ public class SongDatabase extends Application
     private Label message; 
     
     // Initialize Combo box 
-    ComboBox<String> cbSong; 
+    ComboBox<String> cbName; 
 
-    private TextField itemCodeField;  // look at middle name small field!!!
+    private TextField itemCodeField; 
     private TextField descriptionField; 
     private TextField artistField; 
     private TextField albumField; 
     private TextField priceField; 
     
-    String songInfo = null;
+    String nameInfo = null;
     String itemCodeInfo = null; 
     String descriptionInfo = null; 
     String artistInfo = null;
     String albumInfo = null; 
     double priceInfo = 0.0; 
     
-    Playlist newVal;
-    Playlist playlist;
+    Song newVal; // Used in cbName Listener
+    Song song;
     
     private boolean addClicked; 
     private boolean deleteClicked; 
@@ -68,22 +75,26 @@ public class SongDatabase extends Application
     
     Scanner scanner = new Scanner(System.in); 
     
-    TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
-
+    TreeMap < String, Song> playlistMap = 
+        new TreeMap < String, Song>();
+    
+    /**
+     * 
+     */
+    
     public void start(Stage myStage)
     {
         myStage.setTitle("Song Database");
         GridPane rootNode = new GridPane(); 
-//        rootNode.setPadding(new Insets(10,10,10,10));
         rootNode.setHgap(5);
-        rootNode.setVgap(5); // height of vertical gaps bw rows
-        rootNode.setAlignment(Pos.CENTER);// Pos., .TOP_LEFT, 
+        rootNode.setVgap(5); // height of vertical gaps between rows
+        rootNode.setAlignment(Pos.CENTER); // Align center left 
         rootNode.setPadding(new Insets(30));
       
         Scene myScene = new Scene(rootNode, 550, 500); //500); // w, h of window
         
         // Assigning node values
-        song        = new Label ("Select Song: "); 
+        name        = new Label ("Select Song: "); 
         itemCode    = new Label ("Item Code: ");
         description = new Label ("Description: ");
         artist      = new Label("Artist: "); 
@@ -118,7 +129,7 @@ public class SongDatabase extends Application
                 "No Songs Selected" );
         
         // Create combo box.
-        cbSong = new ComboBox<String> (songField);
+        cbName = new ComboBox<String> (songField);
         
         /**
          * Calling this opening of text file.
@@ -147,19 +158,19 @@ public class SongDatabase extends Application
          * This Change Listener fills up the song's properties
          * when user select the song from the combo box. 
          * 
-         * Note, <String>, not <Playlist>!!!
+         * Note, <String>, not <Song>!!!
          */
-        cbSong.valueProperty().addListener( new ChangeListener <String>() 
+        cbName.valueProperty().addListener( new ChangeListener <String>() 
         {
             public void changed(ObservableValue <? extends String> 
             changed, String oldVal, String newVal) 
             {
-                Playlist selectedSong = playlistMap.get(newVal);
+                Song selectedSong = playlistMap.get(newVal);
 
                 String[] column = 
                     selectedSong.toString().split(";");
              
-                cbSong.setValue(column[0]); 
+                cbName.setValue(column[0]); 
                 itemCodeField.setText(column[1]);
                 descriptionField.setText(column[2]);
                 artistField.setText(column[3]); 
@@ -169,8 +180,8 @@ public class SongDatabase extends Application
         });
         
         // Arrange node in grid
-        rootNode.add(song, 0,0);
-        rootNode.add(cbSong, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
+        rootNode.add(name , 0,0);
+        rootNode.add(cbName, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
         
         rootNode.add(itemCode, 0, 1); // col1, row1 
         rootNode.add(itemCodeField, 1, 1, 2, 1); // col2, row1 //<===== MAKE SMALLER!! 
@@ -209,10 +220,10 @@ public class SongDatabase extends Application
             
             if(addClicked)
             {
-                cbSong.setEditable(true);
+                cbName.setEditable(true);
                 // Clear field
                 // Disable
-                cbSong.setValue("");
+                cbName.setValue("");
                 itemCodeField.setText(""); 
                 descriptionField.setText(""); 
                 artistField.setText(""); 
@@ -222,7 +233,7 @@ public class SongDatabase extends Application
                 // Enable: 
                 accept.setDisable(false);
                 cancel.setDisable(false);
-                cbSong.setDisable(false);
+                cbName.setDisable(false);
                 itemCodeField.setDisable(false);
                 descriptionField.setDisable(false);
                 artistField.setDisable(false);
@@ -247,14 +258,14 @@ public class SongDatabase extends Application
             if(editClicked)
             {
                 // Allow TextField to be editted
-                cbSong.setEditable(true);
+                cbName.setEditable(true);
                 descriptionField.setEditable(true);
                 artistField.setEditable(true);
                 albumField.setEditable(true);
                 priceField.setEditable(true);
 
                 // Enable 
-                cbSong.setDisable(false);
+                cbName.setDisable(false);
                 descriptionField.setDisable(false);
                 artistField.setDisable(false);
                 albumField.setDisable(false);
@@ -286,7 +297,7 @@ public class SongDatabase extends Application
                 cancel.setDisable(false);
                 
                 // Disable
-                cbSong.setDisable(true); 
+                cbName.setDisable(true); 
                 itemCodeField.setDisable(true);
                 descriptionField.setDisable(true);
                 artistField.setDisable(true);
@@ -340,10 +351,10 @@ public class SongDatabase extends Application
                     writeToFile();   // <======== do we put to map first?? 
                     
                     // Disable editing in combo box
-                    cbSong.setEditable(true);
+                    cbName.setEditable(true);
                     
                     // Enable
-                    cbSong.setDisable(false); 
+                    cbName.setDisable(false); 
                     add.setDisable(false);
                     edit.setDisable(false);
                     delete.setDisable(false);
@@ -373,10 +384,10 @@ public class SongDatabase extends Application
                     removeFromFile(); 
                     
                     // Disable editing in combo box
-                    cbSong.setEditable(true);
+                    cbName.setEditable(true);
                     
                     // Enable
-                    cbSong.setDisable(false); 
+                    cbName.setDisable(false); 
                     add.setDisable(false);
                     edit.setDisable(false);
                     delete.setDisable(false);
@@ -400,20 +411,19 @@ public class SongDatabase extends Application
                 if(editClicked)
                 {
                     // .remove(songInfo)
-                    playlistMap.remove(cbSong.getValue()); // (songgetText()); // might move to EditHandler()
+                    playlistMap.remove(cbName.getValue()); // (songgetText()); // might move to EditHandler()
                     try 
                     {
                         // Pull user input data
                  
-                        playlist = new Playlist(cbSong.getValue(),  
+                        song = new Song(cbName.getValue(),  
                                 itemCodeField.getText(), 
                                 descriptionField.getText(), 
                                 artistField.getText(), 
                                 albumField.getText(),
                                 Double.parseDouble(priceField.getText()) );
                         
-//                        playlistMap.put(songInfo, playlist);
-                        playlistMap.put(cbSong.getValue(), playlist);
+                        playlistMap.put(cbName.getValue(), song);
                         
                         // More like write everything from map to file again
                         removeFromFile(); 
@@ -424,7 +434,7 @@ public class SongDatabase extends Application
                     }
                     
                     // Enable
-                    cbSong.setDisable(false); 
+                    cbName.setDisable(false); 
                     add.setDisable(false);
                     edit.setDisable(false);
                     delete.setDisable(false);
@@ -454,7 +464,7 @@ public class SongDatabase extends Application
             // Pull user input data
             System.out.println("This is the map size: " + playlistMap.size() );
   
-            bw.write(cbSong.getValue() + ";" + itemCodeField.getText() + ";" +
+            bw.write(cbName.getValue() + ";" + itemCodeField.getText() + ";" +
                     descriptionField.getText() + ";" + artistField.getText() + ";" + 
                     albumField.getText() + ";" + Double.parseDouble(priceField.getText())); 
             bw.newLine();    
@@ -468,7 +478,7 @@ public class SongDatabase extends Application
             ioe.printStackTrace();
         } 
         // Add new song title to ComboBox
-        cbSong.getItems().addAll(cbSong.getValue()); 
+        cbName.getItems().addAll(cbName.getValue()); 
 
         System.out.println("File created and written. Success");   
     }
@@ -476,7 +486,7 @@ public class SongDatabase extends Application
     public void defaultButtonDisplay()
     {
         // Clear field
-        cbSong.setValue("");
+        cbName.setValue("");
         itemCodeField.setText(""); 
         descriptionField.setText(""); 
         artistField.setText(""); 
@@ -484,7 +494,7 @@ public class SongDatabase extends Application
         priceField.setText(""); 
         
         // Enable
-        cbSong.setDisable(false); 
+        cbName.setDisable(false); 
         add.setDisable(false);
         edit.setDisable(false);
         delete.setDisable(false);
@@ -505,9 +515,9 @@ public class SongDatabase extends Application
     {
         // Set the default value
 
-        cbSong.setValue("" + playlistMap.firstEntry().getKey());
+        cbName.setValue("" + playlistMap.firstEntry().getKey());
         // Enable
-        cbSong.setDisable(false); 
+        cbName.setDisable(false); 
         add.setDisable(false);
         edit.setDisable(false);
         delete.setDisable(false);
@@ -526,9 +536,9 @@ public class SongDatabase extends Application
     public void emptyFileDisplay()
     {
         // Set the default value
-        cbSong.setValue("No Songs Selected");
+        cbName.setValue("No Songs Selected");
 
-        cbSong.setEditable(true); 
+        cbName.setEditable(true); 
   
         // Initial State (empty)
         edit.setDisable(true);
@@ -545,8 +555,8 @@ public class SongDatabase extends Application
     
     public boolean checkForEmptyField() 
     {
-        if(cbSong.getValue().isEmpty() |
-            itemCode.getText().isEmpty() |
+        if(cbName.getValue().isEmpty() |
+            itemCodeField.getText().isEmpty() |
             descriptionField.getText().isEmpty() |
             artistField.getText().isEmpty() |
             priceField.getText().isEmpty())
@@ -572,8 +582,6 @@ public class SongDatabase extends Application
                 return false; 
             }
         }
-        
-//        else if(priceField.getText().isDouble())
         message.setText("");
         return true;   
     }
@@ -587,24 +595,26 @@ public class SongDatabase extends Application
      */
     public void putToTreeMap()
     {
-        playlist = new Playlist(cbSong.getValue(),  
+        song = new Song(cbName.getValue(),  
                 itemCodeField.getText(), 
                 descriptionField.getText() , 
                 artistField.getText(), 
                 albumField.getText(), 
                 Double.parseDouble(priceField.getText()));
 
-        playlistMap.put(cbSong.getValue(), playlist);
-        cbSong.getItems().remove("No Songs Selected");
+        playlistMap.put(cbName.getValue(), song);
+        cbName.getItems().remove("No Songs Selected");
       
         System.out.println("playlistMap size: " + playlistMap.size()); 
     }
     
     public void removeFromTreeMap()
     {
-        playlistMap.remove(cbSong.getValue());
-        cbSong.getItems().remove("No Songs Selected"); 
-        cbSong.getItems().remove(cbSong.getValue());
+        playlistMap.remove(cbName.getValue());
+
+        // remove from drop down display
+        cbName.getItems().remove("No Songs Selected"); 
+        cbName.getItems().remove(cbName.getValue());
     }
     
     public void removeFromFile()
@@ -615,9 +625,10 @@ public class SongDatabase extends Application
         {   
             System.out.println("This is the map size: " 
                 + playlistMap.size());
+
              // Clear all items in combo box
 
-            for(Map.Entry<String, Playlist> p: playlistMap.entrySet())
+            for(Map.Entry<String, Song> p: playlistMap.entrySet())
             {
                 bw.write("" +  p.getValue() ); // our map's value has same content as line in the text file
                 bw.newLine();
@@ -659,37 +670,37 @@ public class SongDatabase extends Application
             {           
                 System.out.println(line);  
                 String[] column         = line.split(";");
-                songInfo         = column[0].trim(); 
+                nameInfo         = column[0].trim(); 
                 itemCodeInfo     = column[1].trim(); 
                 descriptionInfo  = column[2].trim();
                 artistInfo       = column[3].trim();
                 albumInfo        = column[4].trim();
                 priceInfo        = Double.parseDouble(column[5].trim());
                 
-                Playlist playlist = new Playlist(songInfo,itemCodeInfo, 
+                Song song = new Song(nameInfo,itemCodeInfo, 
                         descriptionInfo, artistInfo,  
                         albumInfo, priceInfo);
                 
-                playlistMap.put(songInfo, playlist);   
+                playlistMap.put(nameInfo, song);   
                 
-                cbSong.getItems().add(songInfo); 
+                cbName.getItems().add(nameInfo); 
             }
-            cbSong.getItems().remove("No Songs Selected");
+            cbName.getItems().remove("No Songs Selected");
             
             System.out.println("This is the map size: " + playlistMap.size() );
             
             // Read in all that's in text file 
             // and add it to map 
-            cbSong.valueProperty().addListener( new ChangeListener <String>() 
+            cbName.valueProperty().addListener( new ChangeListener <String>() 
             {
                   public void changed(ObservableValue <? extends String> 
                   changed, String oldVal, String newVal) 
                   {
-                      Playlist playlist = playlistMap.get(newVal);
+                      Song song = playlistMap.get(newVal);
 
-                      String[] column = (String[]) playlist.toString().split(";");
+                      String[] column = (String[]) song.toString().split(";");
                      
-                      cbSong.setValue(column[0]); 
+                      cbName.setValue(column[0]); 
                       itemCodeField.setText(column[1]);
                       descriptionField.setText(column[2]);
                       artistField.setText(column[3]); 

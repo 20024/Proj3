@@ -5,11 +5,11 @@ public class Song
     private String description; 
     private String artist; 
     private String album;
-    private String price; 
+    private double price; 
 
     public Song(String name, String itemCode, 
             String description, String artist, 
-            String album, String price)
+            String album, double price)
     {
         this.name = name;
         this.itemCode = itemCode;
@@ -69,12 +69,12 @@ public class Song
         this.album = album;
     }
 
-    public String getPrice()
+    public double getPrice()
     {
         return price;
     }
 
-    public void setPrice(String price)
+    public void setPrice(double price)
     {
         this.price = price;
     }
