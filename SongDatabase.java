@@ -1,6 +1,11 @@
 import javafx.scene.control.*; 
+import java.util.Scanner;
+
 import javafx.stage.Stage;
+
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -59,9 +64,11 @@ public class SongDatabase extends Application
     private boolean editClicked; 
     Stage myStage; 
     
+    Scanner scanner = new Scanner(System.in); 
+    
     TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
 
-    public void start(Stage myStage)
+    public void start(Stage myStage) throws IOException
     {
         myStage.setTitle("Song Database");
         GridPane rootNode = new GridPane(); 
@@ -127,6 +134,13 @@ public class SongDatabase extends Application
         albumField.setDisable(true); // if N/A, assign "NONE" 
         priceField.setDisable(true);
     
+        
+        // Need to prefill combo box with previous data-- write txt to TreeMap
+        // where key = cbSong,
+//        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
+        getPlaylist();
+
+        
         add.setOnAction(new AddHandler());
         accept.setOnAction(new AcceptHandler());
         delete.setOnAction(new DeleteHandler());
@@ -158,7 +172,7 @@ public class SongDatabase extends Application
                   priceField.setText(column[5]); 
               }
         });
-
+        
         // Arrange node in grid
         rootNode.add(song, 0,0);
         rootNode.add(cbSong, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
@@ -531,4 +545,92 @@ public class SongDatabase extends Application
     {
         launch(args); 
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public void getPlaylist()
+    {
+        System.out.println("Please input the file name, including .txt");
+        String fileName = scanner.next(); 
+        String line = null; 
+       
+        
+        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
+    
+        try(BufferedReader br = 
+            new BufferedReader(new FileReader(fileName)))
+        {
+            while((line = br.readLine()) != null)
+            {           
+                System.out.println(line);  
+//                playlistMap.put( , line); // writing to map 
+                String[] column = line.split(";");
+                String song = column[0].trim(); 
+                String itemCode = column[1].trim(); 
+                String description = column[2].trim();
+                String artist = column[3].trim();
+                String album = column[4].trim();
+                String price = column[5].trim();
+                
+                Playlist playlist = new Playlist(song,itemCode, 
+                        description, artist,  
+                        album, Double.parseDouble(price));
+                
+                playlistMap.put(song, playlist);       
+            }
+            
+            for (Map.Entry p: playlistMap.entrySet())
+                System.out.println(p.getKey() + " : " +
+                        p.getValue());
+        }
+        catch(IOException e)
+        {
+            System.out.println("File does not exist");
+            System.out.println("Would you like to create a new file? (Y/N)");
+            String choice = scanner.next(); 
+            if(choice.equalsIgnoreCase("y")) 
+            {    
+                System.out.println("What is the name of this new playlist (.txt)? ");
+                String newFileName = scanner.next(); 
+                fileName = newFileName; 
+            }
+            else
+            {
+                System.out.println("This is when we exit()");
+            } 
+        } 
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

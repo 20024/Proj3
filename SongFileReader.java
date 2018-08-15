@@ -33,14 +33,11 @@ public class SongFileReader
     static String album;
     static String price; 
     
-
-    
     public static void main(String[] args) throws IOException 
     {
         getPlaylist(); 
     }
 
-    
     static void getPlaylist() throws IOException 
     {
         System.out.println("Please input the file name, including .txt");
@@ -53,10 +50,23 @@ public class SongFileReader
         try(BufferedReader br = 
             new BufferedReader(new FileReader(fileName)))
         {
-
             while((line = br.readLine()) != null)
-            {
-                System.out.println(line);    
+            {           
+                System.out.println(line);  
+//                playlistMap.put( , line); // writing to map 
+                String[] column = line.split(";");
+                String song = column[0].trim(); 
+                String itemCode = column[1].trim(); 
+                String description = column[2].trim();
+                String artist = column[3].trim();
+                String album = column[4].trim();
+                String price = column[5].trim();
+                
+                Playlist playlist = new Playlist(song,itemCode, 
+                        description, artist,  
+                        album, Double.parseDouble(price));
+                
+                playlistMap.put(song, playlist);       
             }
         }
         catch(IOException e)
