@@ -1,13 +1,10 @@
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
-
 import java.util.Scanner;
 
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,6 +39,7 @@ public class SongDatabase extends Application
     private Label artist; 
     private Label album;
     private Label price; 
+    private Label message; 
     
     // Initialize Combo box 
     ComboBox<String> cbSong; 
@@ -92,6 +90,7 @@ public class SongDatabase extends Application
         artist      = new Label("Artist: "); 
         album       = new Label("Albumn: "); // if N/A, assign "NONE" 
         price       = new Label("Price: ");
+        message     = new Label(""); 
         
         itemCodeField     = new TextField();
         descriptionField  = new TextField(); 
@@ -195,6 +194,8 @@ public class SongDatabase extends Application
         rootNode.add(accept, 3, 14); // col1, row1
         rootNode.add(cancel, 4, 14); // col2, row1
         rootNode.add(exit, 2, 15);
+        
+        rootNode.add(message, 0, 16); 
          
         myStage.setScene(myScene);
         myStage.show();
@@ -561,20 +562,17 @@ public class SongDatabase extends Application
             artistField.getText().isEmpty() |
             priceField.getText().isEmpty())
         {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Empty Fields Not Allowed");
-            alert.setHeaderText(null);
-            alert.setContentText("Please make sure all the "
-                + "fields are filled out.");
-            
+            message.setText("Empty Field!");
             return false;
         }
         else if(albumField.getText().isEmpty())
         {
             albumField.setText("None");
+            message.setText("");
             return false; 
         }
-        return true; 
+        message.setText("");
+        return true;   
     }
     
     /**
