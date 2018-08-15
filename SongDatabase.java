@@ -126,6 +126,7 @@ public class SongDatabase extends Application
          */
         getPlaylist(); 
      
+        // Determines how the initial stage should be displayed
         if (playlistMap.size() != 0 ) // If file is not 
         {
             nonemptyFileDisplay();
@@ -134,8 +135,6 @@ public class SongDatabase extends Application
         {
             emptyFileDisplay();
         }
-
-
         
         add.setOnAction(new AddHandler());
         accept.setOnAction(new AcceptHandler());
@@ -278,6 +277,7 @@ public class SongDatabase extends Application
         @Override
         public void handle(ActionEvent event)
         { 
+            deleteClicked = true; 
             if(deleteClicked)
             {
                 // Enable
