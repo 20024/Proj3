@@ -439,7 +439,7 @@ public class SongDatabase extends Application
 
     public void writeToFile()
     {  
-        String fileName = "tester.txt"; 
+//        String fileName = "tester.txt"; 
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
         {   
             // Pull user input data
@@ -526,7 +526,7 @@ public class SongDatabase extends Application
     public void removeFromFile()
     { // After removing from the map, we will write the new map to the file. 
         
-        String fileName = "tester.txt"; 
+//        String fileName = "tester.txt"; 
         // note, no "true" so we can overwrite the whole file!!!
         try(BufferedWriter bw = new BufferedWriter(
                 new FileWriter(fileName))) 
