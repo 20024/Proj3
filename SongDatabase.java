@@ -70,7 +70,6 @@ public class SongDatabase extends Application
     
     TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
 
-    
     public void start(Stage myStage)
     {
         myStage.setTitle("Song Database");
@@ -81,7 +80,7 @@ public class SongDatabase extends Application
         rootNode.setAlignment(Pos.CENTER);// Pos., .TOP_LEFT, 
         rootNode.setPadding(new Insets(30));
       
-        Scene myScene = new Scene(rootNode, 500,500); // w, h of window
+        Scene myScene = new Scene(rootNode, 550, 500); //500); // w, h of window
         
         // Assigning node values
         song        = new Label ("Select Song: "); 
@@ -195,7 +194,7 @@ public class SongDatabase extends Application
         rootNode.add(cancel, 4, 14); // col2, row1
         rootNode.add(exit, 2, 15);
         
-        rootNode.add(message, 0, 16); 
+        rootNode.add(message, 0, 18, 4, 1); //, 0, 3); // 0, 17
          
         myStage.setScene(myScene);
         myStage.show();
@@ -333,125 +332,115 @@ public class SongDatabase extends Application
         {   
             if(checkForEmptyField())
             {
-            if(addClicked)
-            {  
-                // Add to treemap
-                putToTreeMap();
-                // Write to file
-                writeToFile();   // <======== do we put to map first?? 
+                if(addClicked)
+                {  
+                    // Add to treemap
+                    putToTreeMap();
+                    // Write to file
+                    writeToFile();   // <======== do we put to map first?? 
+                    
+                    // Disable editing in combo box
+                    cbSong.setEditable(true);
+                    
+                    // Enable
+                    cbSong.setDisable(false); 
+                    add.setDisable(false);
+                    edit.setDisable(false);
+                    delete.setDisable(false);
+                    exit.setDisable(false);
+                    
+                    // Disable
+                    itemCodeField.setDisable(true);
+                    descriptionField.setDisable(true);
+                    artistField.setDisable(true);
+                    albumField.setDisable(true);
+                    priceField.setDisable(true);
+                    accept.setDisable(true);
+                    cancel.setDisable(true);  
+                    
+                    // Reset addClicked to false
+                    addClicked = false; 
                 
-                // Disable editing in combo box
-                cbSong.setEditable(true);
-                
-                // Enable
-                cbSong.setDisable(false); 
-                add.setDisable(false);
-                edit.setDisable(false);
-                delete.setDisable(false);
-                exit.setDisable(false);
-                
-                // Disable
-                itemCodeField.setDisable(true);
-                descriptionField.setDisable(true);
-                artistField.setDisable(true);
-                albumField.setDisable(true);
-                priceField.setDisable(true);
-                accept.setDisable(true);
-                cancel.setDisable(true);  
-                
-                // Reset addClicked to false
-                addClicked = false; 
-            
-            }
+                }
             }
             
             if(checkForEmptyField())
             {
             
-            if(deleteClicked)
-            {
-                removeFromTreeMap(); 
-                removeFromFile(); 
-                
-                // Disable editing in combo box
-                cbSong.setEditable(true);
-                
-                // Enable
-                cbSong.setDisable(false); 
-                add.setDisable(false);
-                edit.setDisable(false);
-                delete.setDisable(false);
-                exit.setDisable(false);
-                
-                // Disable
-                itemCodeField.setDisable(true);
-                descriptionField.setDisable(true);
-                artistField.setDisable(true);
-                albumField.setDisable(true);
-                priceField.setDisable(true);
-                accept.setDisable(true);
-                cancel.setDisable(true);  
-                
-                // Reset addClicked to false
-                deleteClicked = false; 
-            }
-            }
-            if(checkForEmptyField())
-            {
-            
-            if(editClicked)
-            {
-                // .remove(songInfo)
-                playlistMap.remove(cbSong.getValue()); // (songgetText()); // might move to EditHandler()
-                try 
+                if(deleteClicked)
                 {
-                    // Pull user input data
-                    songInfo = cbSong.getValue();
-                    itemCodeInfo = itemCodeField.getText(); 
-                    descriptionInfo = descriptionField.getText();
-                    artistInfo = artistField.getText();
-                    albumInfo = albumField.getText();
-                    priceInfo = Double.parseDouble(priceField.getText()); // double to string
-                    
-                    playlist = new Playlist(songInfo,  itemCodeInfo, 
-                            descriptionInfo, artistInfo, albumInfo, priceInfo);
-//                    
-//                    playlist = new Playlist(cbSong.getValue(),  
-//                            itemCodeField.getText(), 
-//                            descriptionField.getText(), 
-//                            artistField.getText(), 
-//                            albumField.getText(),
-//                            Double.parseDouble(priceField.getText()) );
-                    
-                    playlistMap.put(songInfo, playlist);
-//                    playlistMap.put(cbSong.getValue(), playlist);
-                    
-                    // More like write everything from map to file again
+                    removeFromTreeMap(); 
                     removeFromFile(); 
+                    
+                    // Disable editing in combo box
+                    cbSong.setEditable(true);
+                    
+                    // Enable
+                    cbSong.setDisable(false); 
+                    add.setDisable(false);
+                    edit.setDisable(false);
+                    delete.setDisable(false);
+                    exit.setDisable(false);
+                    
+                    // Disable
+                    itemCodeField.setDisable(true);
+                    descriptionField.setDisable(true);
+                    artistField.setDisable(true);
+                    albumField.setDisable(true);
+                    priceField.setDisable(true);
+                    accept.setDisable(true);
+                    cancel.setDisable(true);  
+                    
+                    // Reset addClicked to false
+                    deleteClicked = false; 
                 }
-                catch(IllegalArgumentException iae)
-                {
-                    System.out.println("Price needs to be a double! ");
-                }
-                
-                // Enable
-                cbSong.setDisable(false); 
-                add.setDisable(false);
-                edit.setDisable(false);
-                delete.setDisable(false);
-                exit.setDisable(false);
-                
-                // Disable
-                itemCodeField.setDisable(true);
-                descriptionField.setDisable(true);
-                artistField.setDisable(true);
-                albumField.setDisable(true);
-                priceField.setDisable(true);
-                accept.setDisable(true);
-                cancel.setDisable(true);  
-                
-                editClicked = false; 
             }
+            if(checkForEmptyField())
+            {
+                if(editClicked)
+                {
+                    // .remove(songInfo)
+                    playlistMap.remove(cbSong.getValue()); // (songgetText()); // might move to EditHandler()
+                    try 
+                    {
+                        // Pull user input data
+                 
+                        playlist = new Playlist(cbSong.getValue(),  
+                                itemCodeField.getText(), 
+                                descriptionField.getText(), 
+                                artistField.getText(), 
+                                albumField.getText(),
+                                Double.parseDouble(priceField.getText()) );
+                        
+//                        playlistMap.put(songInfo, playlist);
+                        playlistMap.put(cbSong.getValue(), playlist);
+                        
+                        // More like write everything from map to file again
+                        removeFromFile(); 
+                    }
+                    catch(IllegalArgumentException iae)
+                    {
+                        System.out.println("Price needs to be a double! ");
+                    }
+                    
+                    // Enable
+                    cbSong.setDisable(false); 
+                    add.setDisable(false);
+                    edit.setDisable(false);
+                    delete.setDisable(false);
+                    exit.setDisable(false);
+                    
+                    // Disable
+                    itemCodeField.setDisable(true);
+                    descriptionField.setDisable(true);
+                    artistField.setDisable(true);
+                    albumField.setDisable(true);
+                    priceField.setDisable(true);
+                    accept.setDisable(true);
+                    cancel.setDisable(true);  
+                    
+                    editClicked = false; 
+                }
             }
         }
     }
@@ -571,6 +560,20 @@ public class SongDatabase extends Application
             message.setText("");
             return false; 
         }
+        else if(!priceField.getText().isEmpty())
+        {
+            try 
+            {
+                Double.parseDouble(priceField.getText());
+            }
+            catch(NumberFormatException e)
+            {
+                message.setText("Need NUMERIC Price!");
+                return false; 
+            }
+        }
+        
+//        else if(priceField.getText().isDouble())
         message.setText("");
         return true;   
     }
@@ -628,8 +631,7 @@ public class SongDatabase extends Application
     }
     
     public static void main(String[] args)
-    {
-        
+    {  
         launch(args); 
     }
     
