@@ -1,11 +1,7 @@
+
 import javafx.scene.control.*; 
-import java.util.Scanner;
-
 import javafx.stage.Stage;
-
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -22,7 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.beans.value.ChangeListener;
 
-public class SongDatabase extends Application
+public class SongDatabasePleaseWork extends Application
 {
     // Initialize Buttons for user selection 
     private Button add; 
@@ -59,17 +55,14 @@ public class SongDatabase extends Application
     Playlist newVal;
     Playlist playlist;
     
-    private boolean addClicked; 
+    private boolean addClicked = true; 
     private boolean deleteClicked; 
     private boolean editClicked; 
     Stage myStage; 
-    static String fileName; 
-    
-    Scanner scanner = new Scanner(System.in); 
     
     TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
 
-    public void start(Stage myStage) throws IOException
+    public void start(Stage myStage)
     {
         myStage.setTitle("Song Database");
         GridPane rootNode = new GridPane(); 
@@ -135,13 +128,6 @@ public class SongDatabase extends Application
         albumField.setDisable(true); // if N/A, assign "NONE" 
         priceField.setDisable(true);
     
-        
-        // Need to prefill combo box with previous data-- write txt to TreeMap
-        // where key = cbSong,
-//        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
-        getPlaylist();
-
-        
         add.setOnAction(new AddHandler());
         accept.setOnAction(new AcceptHandler());
         delete.setOnAction(new DeleteHandler());
@@ -173,7 +159,7 @@ public class SongDatabase extends Application
                   priceField.setText(column[5]); 
               }
         });
-        
+
         // Arrange node in grid
         rootNode.add(song, 0,0);
         rootNode.add(cbSong, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
@@ -210,7 +196,6 @@ public class SongDatabase extends Application
         public void handle(ActionEvent event)
         {
             addClicked = true;
-            
             if(addClicked)
             {
                 // Clear field
@@ -310,17 +295,14 @@ public class SongDatabase extends Application
         {   
             if(addClicked)
             {
-                addClicked = false; 
                 defaultButtonDisplay(); 
             }
             if(editClicked)
             {
-                editClicked = false;
                 defaultButtonDisplay();
             }
             if(deleteClicked)
             {
-                deleteClicked = false; 
                 defaultButtonDisplay();
             }
         }
@@ -394,17 +376,16 @@ public class SongDatabase extends Application
                 playlistMap.remove(itemCodeField.getText()); // might move to EditHandler()
                 try 
                 {
-//                    // Pull user input data
-//                    songInfo = cbSong.getValue();
-//                    itemCodeInfo = itemCodeField.getText(); 
-//                    descriptionInfo = descriptionField.getText();
-//                    artistInfo = artistField.getText();
-//                    albumInfo = albumField.getText();
-//                    priceInfo = Double.parseDouble(priceField.getText()); // double to string
+                    // Pull user input data
+                    songInfo = cbSong.getValue();
+                    itemCodeInfo = itemCodeField.getText(); 
+                    descriptionInfo = descriptionField.getText();
+                    artistInfo = artistField.getText();
+                    albumInfo = albumField.getText();
+                    priceInfo = Double.parseDouble(priceField.getText()); // double to string
                     
-                    playlist = new Playlist(cbSong.getValue(),  itemCodeField.getText(), 
-                            descriptionField.getText(), artistField.getText(), albumField.getText(),
-                            Double.parseDouble(priceField.getText()) );
+                    playlist = new Playlist(songInfo,  itemCodeInfo, 
+                            descriptionInfo, artistInfo, albumInfo, priceInfo);
                     
                     playlistMap.put(cbSong.getValue(), playlist);
                     
@@ -551,122 +532,4 @@ public class SongDatabase extends Application
     {
         launch(args); 
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public void getPlaylist()
-    {
-        System.out.println("Please input the file name, including .txt");
-        fileName = scanner.next(); 
-        String line = null; 
-       
-        
-        TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
-    
-        try(BufferedReader br = 
-            new BufferedReader(new FileReader(fileName)))
-        {
-            while((line = br.readLine()) != null)
-            {           
-                System.out.println(line);  
-                String[] column         = line.split(";");
-                songInfo         = column[0].trim(); 
-                itemCodeInfo     = column[1].trim(); 
-                
-                descriptionInfo  = column[2].trim();
-                artistInfo       = column[3].trim();
-                albumInfo        = column[4].trim();
-                priceInfo        = Double.parseDouble(column[5].trim());
-                
-                Playlist playlist = new Playlist(songInfo,itemCodeInfo, 
-                        descriptionInfo, artistInfo,  
-                        albumInfo, priceInfo);
-                
-                playlistMap.put(songInfo, playlist);   
-                
-                cbSong.getItems().add(songInfo); 
-            }
-            cbSong.getItems().remove("No Songs Selected");
-            
-            cbSong.valueProperty().addListener( new ChangeListener <String>() 
-            {
-                  public void changed(ObservableValue <? extends String> 
-                  changed, String oldVal, String newVal) 
-                  {
-                      Playlist selectedSong = playlistMap.get(newVal);
-
-                      String[] column = (String[]) selectedSong.toString().split(";");
-                     
-                      cbSong.setValue(column[0]); 
-                      itemCodeField.setText(column[1]);
-                      descriptionField.setText(column[2]);
-                      artistField.setText(column[3]); 
-                      albumField.setText(column[4]);
-                      priceField.setText(column[5]); 
-                  }
-            });
-
-        }
-        catch(IOException e)
-        {
-            System.out.println("File does not exist");
-            System.out.println("Would you like to create a new file? (Y/N)");
-            String choice = scanner.next(); 
-            if(choice.equalsIgnoreCase("y")) 
-            {    
-                System.out.println("What is the name of this new playlist (.txt)? ");
-                String newFileName = scanner.next(); 
-                fileName = newFileName; 
-//                writePlaylist(fileName); 
-            }
-            else
-            {
-                System.out.println("This is when we exit()");
-            } 
-        } 
-    }
-//    static void writePlaylist(String fileName) 
-//    {
-//        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true)))
-//        {   
-//            bw.newLine(); 
-//        }
-//        catch(IOException ioe) 
-//        {
-//            ioe.printStackTrace();
-//        } 
-//        System.out.println("File created and empty. Success");  
-//    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
