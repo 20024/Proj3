@@ -22,14 +22,17 @@ import javafx.beans.value.ChangeListener;
 
 
 /**
- * This program prompts the user for a playlist stores 
+ * This program prompts the user for a playlist stored
  * in a text file. If the playlist does not exist, it allows 
  * the user to create a new playlist. It incorporates javaFX
  * as the user interface. This program allows the user to 
  * add, edit or delete songs from the file using Button 
  * and ComboBox. For each song action, it updates the
  * treemap called playlistMap and it updates the file variable,
- * thisFile. 
+ * fileName
+ * 
+ * @param: .txt file 
+ * @return: JavaFX GUI
  * 
  * date: August 16, 2018
  * assignment: Project 3
@@ -84,7 +87,6 @@ public class SongDatabase extends Application
     Stage myStage; 
     String args[];
     static String fileName; 
-    static String thisFile; 
     
     Scanner scanner = new Scanner(System.in); 
     
@@ -96,7 +98,6 @@ public class SongDatabase extends Application
      * calls in the getPlaylist(), create event listeners
      * and show the scene of our program. 
      */
-    
     public void start(Stage myStage)
     {
         myStage.setTitle("Song Database");
@@ -115,14 +116,14 @@ public class SongDatabase extends Application
         itemCode    = new Label ("Item Code: ");
         description = new Label ("Description: ");
         artist      = new Label("Artist: "); 
-        album       = new Label("Albumn: "); 
+        album       = new Label("Album: "); 
         price       = new Label("Price: ");
         message     = new Label(""); 
         
         itemCodeField     = new TextField();
         descriptionField  = new TextField(); 
         artistField       = new TextField(); 
-        albumField        = new TextField(); // if N/A, assign "NONE" 
+        albumField        = new TextField(); 
         priceField        = new TextField();
         
         add     = new Button("Add"); 
@@ -151,7 +152,7 @@ public class SongDatabase extends Application
         /**
          * Opens up textfile inputed/created in command prompt.
          */
-        getPlaylist(thisFile);//args[0]); 
+        getPlaylist(args);//args[0]); 
      
         // Determine how the initial stage should be displayed
         if (playlistMap.size() != 0 ) // If file is not empty
@@ -168,6 +169,7 @@ public class SongDatabase extends Application
          * 
          * Below triggers the correct handler for each time
          * a particular button is pressed. 
+         * 
          */
         add.setOnAction(new AddHandler());
         accept.setOnAction(new AcceptHandler());
@@ -212,7 +214,7 @@ public class SongDatabase extends Application
             }
         }) ;
         
-        // Arrange nodes in grid
+        // Arrange nodes on grid
         rootNode.add(name, 0, 0);
         rootNode.add(cbName, 1, 0, 4, 1); // col0, row1, colspan, rowspan
         
@@ -246,6 +248,12 @@ public class SongDatabase extends Application
        
     }  
     
+    /**
+     * The AddHandler is triggered when the add button is clicked.
+     * 
+     * @author LynHNguyen
+     *
+     */
     class AddHandler implements EventHandler<ActionEvent>
     {
         @Override
@@ -289,7 +297,8 @@ public class SongDatabase extends Application
     /**
      * This EditHandler class is triggered by the button 
      * edit. It enables and disables required Textfields
-     * for user edit
+     * for user edit.
+     * 
      * 
      * @author LynHNguyen
      *
@@ -332,9 +341,10 @@ public class SongDatabase extends Application
 
     /**
      * This DeleteHandler has textfields disabled. 
-     * The only enabled options are gheaccept and cancel buttons
+     * The only enabled options are the accept and cancel buttons
      * The actual deletion of songs happens in the 
      * AcceptHandler.
+     * 
      * 
      * @author LynHNguyen
      *
@@ -375,6 +385,7 @@ public class SongDatabase extends Application
      * 
      * It calls defaultButtonDisplay() for each of the 
      * "clicked" options.
+     * 
      * 
      * @author LynHNguyen
      *
@@ -426,7 +437,6 @@ public class SongDatabase extends Application
      */
     class AcceptHandler implements EventHandler<ActionEvent>
     {
-
         @Override
         public void handle(ActionEvent event)
         {   
@@ -544,17 +554,19 @@ public class SongDatabase extends Application
     }
      
     /**
-     * writeToFile() method appends new data to "thisFile"
+     * writeToFile() method appends new data to "fileName"
      * using BufferedWriter and FileWriter. Its inputs are 
      * information in the song combobox and attributes text files. 
      * 
      * ComboBoxes use getValue() while textfields use getText().
      * Note that priceField.getText() is changed to Double.
+     * 
+     * @author LynHNguyen
      */
     public void writeToFile()
     {  
         try(BufferedWriter bw = new BufferedWriter(
-                new FileWriter(thisFile, true))) // thisFile created in main
+                new FileWriter(fileName, true))) // fileName created in main
         {   
             // Just for playlistMap verification
             System.out.println("This is the map size: " + 
@@ -589,6 +601,8 @@ public class SongDatabase extends Application
      * 
      * This method is used in the CancelHandler class
      * to "cancel" previously altered textfields.
+     * 
+     * @author LynHNguyen
      */
     public void defaultButtonDisplay()
     {
@@ -624,6 +638,7 @@ public class SongDatabase extends Application
      * It sets the combo box's default value as the first 
      * song title in the text file along with enabling 
      * and disabling specific textfields and buttons. 
+     * 
      */
     public void nonemptyFileDisplay()
     {
@@ -774,7 +789,7 @@ public class SongDatabase extends Application
     { // After removing from the map, we will write the new map to the file. 
         // note, no "true" so we can overwrite the whole file!!!
         try(BufferedWriter bw = new BufferedWriter( 
-                new FileWriter(thisFile))) 
+                new FileWriter(fileName))) 
         {   
             System.out.println("This is the map size: " 
                 + playlistMap.size());
@@ -795,7 +810,7 @@ public class SongDatabase extends Application
     
     /**
      * This is our main method. It reassigns the first 
-     * element in the String array args[] to to "thisFile", 
+     * element in the String array args[] to to "fileName", 
      * which gets passed through to other methods in the 
      * program to ensure the correct file is being written to 
      * and read from. 
@@ -805,21 +820,17 @@ public class SongDatabase extends Application
      * @param args
      */
     public static void main(String args[])
-    {      
-        System.out.println(args.length);  // args of 1
-        System.out.println("args[0] is " + args[0]);
-        thisFile = args[0]; 
-        
-        System.out.println("thisFile is : " + thisFile);
-        System.out.println("args is : " + args);
-
-        launch(thisFile); 
+    {   
+        SongDatabase.fileName = args[0]; 
+        System.out.println("Current file used: " + 
+            SongDatabase.fileName);
+        launch(args);
     }
 
 
     /**
      * getPlaylist() is a method called in the beginning of start().
-     * It reads in data from the file arg[0], or thisFile via 
+     * It reads in data from the file arg[0], or fileName via 
      * BufferedReader and FileReader, and it
      * parse and assign the data to the playlistMap. Note that 
      * there is a section that mimics that of a handler for the combo
@@ -829,13 +840,17 @@ public class SongDatabase extends Application
      * This method uses a try/catch to make sure that the file exists.
      * If it doesn't exist, the program jumps to the catch the section
      * where user is prompted to continue or exit then for a new 
-     * file name, which gets assigned to "thisFile". 
+     * file name, which gets assigned to "fileName". 
      * 
-     * @param args: passed on starting at the main method. 
+     * @param args: passed on starting at the main method, args[0]
+     *  hold the textfile name that will be used for this program, 
+     *  if the file exists.
+     *  
+     *  
      * 
      */
     
-    public void getPlaylist(String args) // thisFile
+    public void getPlaylist(String[] args) // thisFile
     {
         String line = null; 
         //          Insert inside getPlaylist() and before the try if want to 
@@ -844,7 +859,7 @@ public class SongDatabase extends Application
         //  fileName = scanner.next();
         
         try(BufferedReader br = 
-            new BufferedReader(new FileReader(thisFile)))
+            new BufferedReader(new FileReader(fileName)))
         {
             try
             {
@@ -911,8 +926,6 @@ public class SongDatabase extends Application
                     + "of this new playlist (.txt)? ");
                 String newFileName = scanner.next(); 
                 fileName = newFileName; 
-                thisFile = fileName; // Reassign to "thisFile" to access 
-                                     // the rest of the code successfully
             }
             else
             {
