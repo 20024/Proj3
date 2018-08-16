@@ -473,7 +473,7 @@ public class SongDatabase extends Application
     {  
 //        String fileName = "tester.txt"; 
         try(BufferedWriter bw = new BufferedWriter(
-                new FileWriter(args[0], true)))
+                new FileWriter(thisFile, true)))
         {   
             // Pull user input data
             System.out.println("This is the map size: " + playlistMap.size() );
@@ -635,7 +635,7 @@ public class SongDatabase extends Application
     { // After removing from the map, we will write the new map to the file. 
         // note, no "true" so we can overwrite the whole file!!!
         try(BufferedWriter bw = new BufferedWriter(
-                new FileWriter(args[0]))) 
+                new FileWriter(thisFile))) 
         {   
             System.out.println("This is the map size: " 
                 + playlistMap.size());
@@ -666,7 +666,7 @@ public class SongDatabase extends Application
         System.out.println("thisFile is : " + thisFile);
         System.out.println("args is : " + args);
 
-        launch(args[0]); 
+        launch(thisFile); 
     }
 
 
