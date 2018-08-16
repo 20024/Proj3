@@ -70,7 +70,7 @@ public class SongDatabaseRetrace extends Application
     
     TreeMap < String, Playlist> playlistMap = new TreeMap < String, Playlist>();
 
-    public void start(Stage myStage) throws IOException
+    public void start(Stage myStage)
     {
         myStage.setTitle("Song Database");
         GridPane rootNode = new GridPane(); 

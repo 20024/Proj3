@@ -1,4 +1,13 @@
-
+/**
+ * This is the Playlist class. It holds getters/
+ * setters and constructor of the Playlist class as
+ * well as getters and setters of the Playlist class
+ * attributes. It can also return the object Playlist 
+ * as a string.
+ *
+ * @author LynHNguyen
+ *
+ */
 public class Playlist
 {
     private String song; 
@@ -8,10 +17,21 @@ public class Playlist
     private String album;
     private double price; 
 
-    // Default constructor
+    /**
+     * 
+     */
     public Playlist() {}
 
     // Constructor
+    /**
+     * 
+     * @param song
+     * @param itemCode
+     * @param description
+     * @param artist
+     * @param album
+     * @param price
+     */
     public Playlist(String song, String itemCode, 
             String description, String artist, 
             String album, double price)
@@ -25,6 +45,10 @@ public class Playlist
         this.price = price;
     }
 
+    /**
+     * 
+     * @return
+     */
     public String getSong()
     {
         return song;
@@ -84,6 +108,7 @@ public class Playlist
     {
         this.price = price;
     }
+   
 
     @Override
     public String toString()

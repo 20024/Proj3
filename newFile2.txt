@@ -1,0 +1,3 @@
+classical;4;4;4;4;4.0
+some classical;3;10;0;0;0.44
+some rock;7;9;7;7;7.0
