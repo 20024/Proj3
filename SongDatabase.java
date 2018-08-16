@@ -57,12 +57,12 @@ public class SongDatabase extends Application
     private TextField albumField; 
     private TextField priceField; 
     
-    String nameInfo = null;
-    String itemCodeInfo = null; 
-    String descriptionInfo = null; 
-    String artistInfo = null;
-    String albumInfo = null; 
-    double priceInfo = 0.0; 
+    String nameInfo; //= null;
+    String itemCodeInfo; //= null; 
+    String descriptionInfo;// = null; 
+    String artistInfo;// = null;
+    String albumInfo;// = null; 
+    double priceInfo;// = 0.0; 
     
     Song newVal; // Used in cbName Listener
     Song song;
@@ -72,12 +72,14 @@ public class SongDatabase extends Application
     private boolean editClicked; 
     Stage myStage; 
     static String fileName; 
+    String args[];
+    static String thisFile; 
     
     Scanner scanner = new Scanner(System.in); 
     
     TreeMap < String, Song> playlistMap = 
         new TreeMap < String, Song>();
-    
+
     /**
      * 
      */
@@ -134,7 +136,8 @@ public class SongDatabase extends Application
         /**
          * Calling this opening of text file.
          */
-        getPlaylist(); 
+
+        getPlaylist(thisFile);//args[0]); 
      
         // Determines how the initial stage should be displayed
         if (playlistMap.size() != 0 ) // If file is not empty
@@ -152,6 +155,7 @@ public class SongDatabase extends Application
         edit.setOnAction(new EditHandler()); 
         cancel.setOnAction(new CancelHandler());
         exit.setOnAction(e -> Platform.exit());
+
         
         /**
          * COMBO BOX SELECTION LISTENER
@@ -165,6 +169,7 @@ public class SongDatabase extends Application
             public void changed(ObservableValue <? extends String> 
             changed, String oldVal, String newVal) 
             {
+                try {
                 Song selectedSong = playlistMap.get(newVal);
 
                 String[] column = 
@@ -176,11 +181,19 @@ public class SongDatabase extends Application
                 artistField.setText(column[3]); 
                 albumField.setText(column[4]);
                 priceField.setText(column[5]); 
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e);
+                }
           }
-        });
+        }) ;
+      
+      
+
         
         // Arrange node in grid
-        rootNode.add(name , 0,0);
+        rootNode.add(name, 0, 0);
         rootNode.add(cbName, 1, 0, 4, 1); // col0, row1, toColIndex, toRowIndex
         
         rootNode.add(itemCode, 0, 1); // col1, row1 
@@ -209,6 +222,7 @@ public class SongDatabase extends Application
          
         myStage.setScene(myScene);
         myStage.show();
+       
     }  
     
     class AddHandler implements EventHandler<ActionEvent>
@@ -459,7 +473,7 @@ public class SongDatabase extends Application
     {  
 //        String fileName = "tester.txt"; 
         try(BufferedWriter bw = new BufferedWriter(
-                new FileWriter(fileName, true)))
+                new FileWriter(args[0], true)))
         {   
             // Pull user input data
             System.out.println("This is the map size: " + playlistMap.size() );
@@ -621,7 +635,7 @@ public class SongDatabase extends Application
     { // After removing from the map, we will write the new map to the file. 
         // note, no "true" so we can overwrite the whole file!!!
         try(BufferedWriter bw = new BufferedWriter(
-                new FileWriter(fileName))) 
+                new FileWriter(args[0]))) 
         {   
             System.out.println("This is the map size: " 
                 + playlistMap.size());
@@ -641,31 +655,38 @@ public class SongDatabase extends Application
         } 
     }
     
-    public static void main(String[] args)
-    {  
-        launch(args); 
-    }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public void getPlaylist()
-    {
-        System.out.println("Please input the file name, including .txt");
-        fileName = scanner.next(); 
-        String line = null; 
+    public static void main(String args[])
+    {      
+        System.out.println(args.length);  // args of 1
+        System.out.println("args[0] is " + args[0]);
+        thisFile = args[0]; 
+        
+        System.out.println("thisFile is : " + thisFile);
+        System.out.println("args is : " + args);
 
+        launch(args[0]); 
+    }
+
+
+    
+    
+    
+    
+    
+//  System.out.println("Please input the file name, including .txt");
+//  fileName = scanner.next();
+    
+    public void getPlaylist(String args)
+    {
+        String line = null; 
+        
         try(BufferedReader br = 
-            new BufferedReader(new FileReader(fileName)))
+            new BufferedReader(new FileReader(thisFile)))
         {
+            try
+            {
             while((line = br.readLine()) != null)
             {           
                 System.out.println(line);  
@@ -684,6 +705,11 @@ public class SongDatabase extends Application
                 playlistMap.put(nameInfo, song);   
                 
                 cbName.getItems().add(nameInfo); 
+            }}
+            catch(NullPointerException npe)
+            {
+                System.out.println("Null exception between here");
+         
             }
             cbName.getItems().remove("No Songs Selected");
             
@@ -721,6 +747,7 @@ public class SongDatabase extends Application
                 System.out.println("What is the name of this new playlist (.txt)? ");
                 String newFileName = scanner.next(); 
                 fileName = newFileName; 
+                thisFile = fileName; 
             }
             else
             {
@@ -731,3 +758,6 @@ public class SongDatabase extends Application
 
     
 }
+    
+
+
